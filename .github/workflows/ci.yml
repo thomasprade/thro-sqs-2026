@@ -33,13 +33,19 @@ jobs:
       - run: npm ci
       - run: npm run build -w shared
       - run: npm run test -w backend -- --coverage
-      - run: npm run test:e2e -w backend
+      - run: npm run test:e2e -w backend -- --coverage
       - name: Upload backend coverage
         uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: backend-coverage
           path: backend/coverage/lcov.info
+      - name: Upload backend E2E coverage
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: backend-e2e-coverage
+          path: backend/coverage-e2e/lcov.info
 
   frontend-tests:
     name: Frontend Tests
@@ -108,6 +114,11 @@ jobs:
         with:
           name: backend-coverage
           path: backend/coverage
+      - name: Download backend E2E coverage
+        uses: actions/download-artifact@v7
+        with:
+          name: backend-e2e-coverage
+          path: backend/coverage-e2e
       - name: Download frontend coverage
         uses: actions/download-artifact@v7
         with:
