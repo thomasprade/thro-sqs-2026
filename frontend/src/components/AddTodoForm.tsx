@@ -4,7 +4,7 @@ interface AddTodoFormProps {
   onAdd: (title: string) => Promise<void>;
 }
 
-export default function AddTodoForm({ onAdd }: AddTodoFormProps) {
+export default function AddTodoForm({ onAdd }: Readonly<AddTodoFormProps>) {
   const [title, setTitle] = useState('');
   const [submitting, setSubmitting] = useState(false);
 

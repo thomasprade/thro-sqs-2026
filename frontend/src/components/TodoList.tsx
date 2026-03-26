@@ -6,7 +6,7 @@ interface TodoListProps {
   onDelete: (id: number) => void;
 }
 
-export default function TodoList({ todos, onToggle, onDelete }: TodoListProps) {
+export default function TodoList({ todos, onToggle, onDelete }: Readonly<TodoListProps>) {
   if (todos.length === 0) {
     return <p data-testid="empty-state">No todos yet. Add one above!</p>;
   }

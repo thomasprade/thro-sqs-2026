@@ -1,7 +1,7 @@
 module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   rootDir: 'src',
-  testRegex: '.*\\.spec\\.ts$',
+  testRegex: String.raw`.*\.spec\.ts$`,
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
@@ -9,6 +9,6 @@ module.exports = {
   coverageDirectory: '../coverage',
   testEnvironment: 'node',
   moduleNameMapper: {
-    '^@app/shared(.*)$': '<rootDir>/../../shared/dist$1',
+    '^@app/shared(.*)$': '<rootDir>/../../shared/src$1',
   },
 };

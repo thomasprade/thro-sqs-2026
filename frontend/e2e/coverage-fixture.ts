@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { test as base } from '@playwright/test';
 
@@ -13,7 +13,7 @@ export const test = base.extend({
 
     const coverage = await page.evaluate(() =>
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (window as any).__coverage__ ? JSON.stringify((window as any).__coverage__) : null,
+      (globalThis as any).__coverage__ ? JSON.stringify((globalThis as any).__coverage__) : null,
     );
 
     if (coverage) {
