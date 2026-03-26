@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './coverage-fixture';
 
 test.describe('Todo App UI', () => {
   test.beforeEach(async ({ page }) => {

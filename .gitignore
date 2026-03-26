@@ -3,6 +3,9 @@ dist/
 *.sqlite
 .env
 coverage/
+coverage-e2e/
+.nyc_output/
+*.tsbuildinfo
 data/
 playwright-report/
 test-results/
