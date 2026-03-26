@@ -1,0 +1,11 @@
+node_modules
+dist
+data
+coverage
+playwright-report
+test-results
+.git
+.husky
+.vscode
+e2e
+*.sqlite
