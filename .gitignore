@@ -1,0 +1,10 @@
+node_modules/
+dist/
+*.sqlite
+.env
+coverage/
+data/
+playwright-report/
+test-results/
+.vite/
+.vscode/settings.json
