@@ -1,3 +1,0 @@
-npx knip
-npm run test -w backend
-npm run test -w frontend
