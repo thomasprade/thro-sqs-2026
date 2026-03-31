@@ -1,6 +1,6 @@
 {
-  "dart.flutterSdkPath": "/Users/thomas.prade/.local/share/mise/installs/flutter/3.38.3-stable",
-  "debug.javascript.defaultRuntimeExecutable": {
-    "pwa-node": "/Users/thomas.prade/.local/share/mise/shims/node"
-  }
+    "dart.flutterSdkPath": "/Users/thomas.prade/.local/share/mise/installs/flutter/3.38.3-stable",
+    "debug.javascript.defaultRuntimeExecutable": {
+        "pwa-node": "/Users/thomas.prade/.local/share/mise/shims/node"
+    }
 }

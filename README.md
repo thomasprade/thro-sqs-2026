@@ -21,7 +21,7 @@ Each directory has its own README with more details:
 
 ## Prerequisites
 
-- **Node.js 20** (see `.nvmrc`)
+- **Node.js 24** (see `.nvmrc` or `mise.toml`)
 - **npm** (ships with Node)
 - **Docker & Docker Compose** (for containerised local setup)
 
