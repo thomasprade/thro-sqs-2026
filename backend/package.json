@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "@app/shared": "*",
-    "@nestjs/common": "^11.1.17",
-    "@nestjs/core": "^11.1.17",
-    "@nestjs/platform-express": "^11.1.17",
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/core": "^11.1.18",
+    "@nestjs/platform-express": "^11.1.18",
     "@nestjs/typeorm": "^11.0.0",
     "better-sqlite3": "^12.8.0",
     "class-transformer": "^0.5.1",
@@ -24,7 +24,7 @@
     "typeorm": "^0.3.28"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.16",
+    "@nestjs/cli": "^11.0.18",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "^11.1.17",
     "@types/better-sqlite3": "^7.6.13",
