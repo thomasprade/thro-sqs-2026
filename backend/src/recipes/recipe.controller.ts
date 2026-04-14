@@ -1,8 +1,19 @@
+import { ApiResponse, Ingredient, Recipe } from '@app/shared';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseArrayPipe,
+  ParseIntPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { CreateIngredientDto, CreateRecipeDto, UpdateRecipeDto } from './dto';
+import { IngredientEntity } from './ingredient.entity';
 import { RecipeEntity } from './recipe.entity';
-import { ApiResponse, Recipe } from '@app/shared';
 import { RecipeService } from './recipe.service';
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { CreateRecipeDto, UpdateRecipeDto } from './dto';
 
 function toRecipe(entity: RecipeEntity): Recipe {
   return {
@@ -10,6 +21,18 @@ function toRecipe(entity: RecipeEntity): Recipe {
     title: entity.title,
     description: entity.description,
     author: entity.author,
+    createdAt: entity.createdAt.toISOString(),
+    updatedAt: entity.updatedAt.toISOString(),
+  };
+}
+
+function toIngredient(entity: IngredientEntity): Ingredient {
+  return {
+    id: entity.id,
+    recipeId: entity.recipeId,
+    name: entity.name,
+    amount: entity.amount,
+    unit: entity.unit,
     createdAt: entity.createdAt.toISOString(),
     updatedAt: entity.updatedAt.toISOString(),
   };
@@ -51,5 +74,26 @@ export class RecipeController {
   async remove(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
     await this.recipeService.remove(id);
     return { message: `Todo #${id} deleted` };
+  }
+
+  @Get(':id/ingredients')
+  async getIngredients(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<Ingredient[]>> {
+    const ingredients = await this.recipeService.getIngredients(id);
+    return { data: ingredients.map(toIngredient) };
+  }
+
+  @Post(':id/ingredients')
+  async addIngredients(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(
+      new ParseArrayPipe({
+        items: CreateIngredientDto,
+        whitelist: true,
+      }),
+    )
+    dtos: CreateIngredientDto[],
+  ): Promise<ApiResponse<Ingredient[]>> {
+    const ingredients = await this.recipeService.addIngredients(id, dtos);
+    return { data: ingredients.map(toIngredient) };
   }
 }

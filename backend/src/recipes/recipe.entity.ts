@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IngredientEntity } from './ingredient.entity';
 
 @Entity('recipes')
 export class RecipeEntity {
@@ -25,4 +27,7 @@ export class RecipeEntity {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => IngredientEntity, (ingredient) => ingredient.recipe)
+  ingredients!: IngredientEntity[];
 }
