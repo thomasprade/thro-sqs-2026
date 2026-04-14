@@ -1,7 +1,9 @@
 import { expect, test } from './coverage-fixture';
+import { installTodoApiMock } from './mock-todos';
 
 test.describe('Todo App UI', () => {
   test.beforeEach(async ({ page }) => {
+    await installTodoApiMock(page);
     await page.goto('/');
   });
 

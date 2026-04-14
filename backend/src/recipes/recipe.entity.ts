@@ -6,16 +6,19 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('todos')
-export class TodoEntity {
+@Entity('recipes')
+export class RecipeEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column()
   title!: string;
 
-  @Column({ default: false })
-  completed!: boolean;
+  @Column({ default: '' })
+  description!: string;
+
+  @Column({ default: 'anonymous' })
+  author!: string;
 
   @CreateDateColumn()
   createdAt!: Date;
