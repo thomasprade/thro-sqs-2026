@@ -1,6 +1,10 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-
-export class CreateRecipe {
+import {
+  CreateRecipeDto as sharedCreateRecipeDto,
+  UpdateRecipeDto as sharedUpdateRecipeDto,
+} from '@app/shared';
+//
+export class CreateRecipeDto implements sharedCreateRecipeDto {
   @IsString()
   @IsNotEmpty()
   title!: string;
@@ -12,8 +16,7 @@ export class CreateRecipe {
   author!: string;
 }
 
-export class UpdateRecipe {
-  // MAYBE: id needed?
+export class UpdateRecipeDto implements sharedUpdateRecipeDto {
   @IsString()
   title?: string;
 

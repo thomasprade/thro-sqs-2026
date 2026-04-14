@@ -1,9 +1,10 @@
-import { RecipeEntry } from './recipe.entity';
-import { ApiResponse, CreateRecipeDto, Recipe, UpdateRecipeDto } from '@app/shared';
+import { RecipeEntity } from './recipe.entity';
+import { ApiResponse, Recipe } from '@app/shared';
 import { RecipeService } from './recipe.service';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { CreateRecipeDto, UpdateRecipeDto } from './dto';
 
-function toRecipe(entity: RecipeEntry): Recipe {
+function toRecipe(entity: RecipeEntity): Recipe {
   return {
     id: entity.id,
     title: entity.title,
@@ -15,7 +16,7 @@ function toRecipe(entity: RecipeEntry): Recipe {
 }
 
 @Controller('api/recipes')
-export class RecpipeController {
+export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
   @Get()
