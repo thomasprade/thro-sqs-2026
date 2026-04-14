@@ -19,15 +19,6 @@ export default defineConfig({
   ],
   webServer: [
     {
-      command: 'npm run dev -w backend',
-      url: 'http://localhost:3000/api/recipes',
-      reuseExistingServer: !process.env.CI,
-      cwd: '..',
-      env: {
-        DATABASE_PATH: ':memory:',
-      },
-    },
-    {
       command: 'npm run dev -w frontend',
       url: 'http://localhost:5173',
       reuseExistingServer: !process.env.CI,
