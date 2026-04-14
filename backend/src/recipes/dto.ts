@@ -10,9 +10,11 @@ export class CreateRecipeDto implements sharedCreateRecipeDto {
   title!: string;
 
   @IsString()
+  @IsNotEmpty()
   description!: string;
 
   @IsString()
+  @IsNotEmpty()
   author!: string;
 }
 
