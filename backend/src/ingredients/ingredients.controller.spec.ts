@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { RecipeEntity } from '../recipes/recipe.entity';
 import { IngredientEntity } from './ingredient.entity';
 import { IngredientsController } from './ingredients.controller';
-import { RecipeEntity } from './recipe.entity';
-import { RecipeService } from './recipe.service';
+import { IngredientsService } from './ingredients.service';
 
 describe('IngredientsController', () => {
   let controller: IngredientsController;
-  let service: jest.Mocked<RecipeService>;
+  let service: jest.Mocked<IngredientsService>;
 
   const mockIngredient: IngredientEntity = {
     id: 1,
@@ -24,7 +24,7 @@ describe('IngredientsController', () => {
       controllers: [IngredientsController],
       providers: [
         {
-          provide: RecipeService,
+          provide: IngredientsService,
           useValue: {
             getIngredients: jest.fn().mockResolvedValue([mockIngredient]),
             addIngredients: jest.fn().mockResolvedValue([mockIngredient]),
@@ -34,7 +34,7 @@ describe('IngredientsController', () => {
     }).compile();
 
     controller = module.get(IngredientsController);
-    service = module.get(RecipeService);
+    service = module.get(IngredientsService);
   });
 
   it('should be defined', () => {

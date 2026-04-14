@@ -1,16 +1,16 @@
 import { ApiResponse, Ingredient } from '@app/shared';
 import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post } from '@nestjs/common';
 import { CreateIngredientDto } from './dto';
-import { RecipeService } from './recipe.service';
-import { toIngredient } from './recipes.mapper';
+import { toIngredient } from './ingredients.mapper';
+import { IngredientsService } from './ingredients.service';
 
 @Controller('api/recipes/:id/ingredients')
 export class IngredientsController {
-  constructor(private readonly recipeService: RecipeService) {}
+  constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Get()
   async getIngredients(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<Ingredient[]>> {
-    const ingredients = await this.recipeService.getIngredients(id);
+    const ingredients = await this.ingredientsService.getIngredients(id);
     return { data: ingredients.map(toIngredient) };
   }
 
@@ -25,7 +25,7 @@ export class IngredientsController {
     )
     dtos: CreateIngredientDto[],
   ): Promise<ApiResponse<Ingredient[]>> {
-    const ingredients = await this.recipeService.addIngredients(id, dtos);
+    const ingredients = await this.ingredientsService.addIngredients(id, dtos);
     return { data: ingredients.map(toIngredient) };
   }
 }

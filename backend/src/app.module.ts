@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { IngredientEntity } from './recipes/ingredient.entity';
+import { IngredientEntity } from './ingredients/ingredient.entity';
+import { IngredientsModule } from './ingredients/ingredients.module';
 import { RecipeEntity } from './recipes/recipe.entity';
 import { RecipeModule } from './recipes/recipe.module';
 
@@ -17,6 +18,7 @@ const databasePath =
       synchronize: true,
     }),
     RecipeModule,
+    IngredientsModule,
   ],
 })
 export class AppModule {}

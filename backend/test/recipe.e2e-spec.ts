@@ -2,7 +2,8 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import request from 'supertest';
-import { IngredientEntity } from '../src/recipes/ingredient.entity';
+import { IngredientEntity } from '../src/ingredients/ingredient.entity';
+import { IngredientsModule } from '../src/ingredients/ingredients.module';
 import { RecipeEntity } from '../src/recipes/recipe.entity';
 import { RecipeModule } from '../src/recipes/recipe.module';
 
@@ -19,6 +20,7 @@ describe('Todo (e2e)', () => {
           synchronize: true,
         }),
         RecipeModule,
+        IngredientsModule,
       ],
     }).compile();
 

@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { RecipeEntity } from './recipe.entity';
+import { RecipeEntity } from '../recipes/recipe.entity';
 
 @Entity('recipe_ingredients')
 export class IngredientEntity {
