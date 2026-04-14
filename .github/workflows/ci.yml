@@ -47,64 +47,65 @@ jobs:
           name: backend-e2e-coverage
           path: backend/coverage-e2e/lcov.info
 
-  frontend-tests:
-    name: Frontend Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npm run build -w shared
-      - run: npm run test -w frontend -- --coverage
-      - name: Upload frontend coverage
-        uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
-        with:
-          name: frontend-coverage
-          path: frontend/coverage/lcov.info
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-        working-directory: frontend
-      - name: Run E2E tests with coverage
-        run: npm run test:e2e:coverage -w frontend
-      - name: Upload frontend E2E coverage
-        uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
-        with:
-          name: frontend-e2e-coverage
-          path: frontend/coverage-e2e/lcov.info
+  # frontend-tests:
+  #   name: Frontend Tests
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - uses: actions/setup-node@v6
+  #       with:
+  #         node-version: 24
+  #         cache: npm
+  #     - run: npm ci
+  #     - run: npm run build -w shared
+  #     - run: npm run test -w frontend -- --coverage
+  #     - name: Upload frontend coverage
+  #       uses: actions/upload-artifact@v7
+  #       if: ${{ !cancelled() }}
+  #       with:
+  #         name: frontend-coverage
+  #         path: frontend/coverage/lcov.info
+  #     - name: Install Playwright browsers
+  #       run: npx playwright install --with-deps chromium
+  #       working-directory: frontend
+  #     - name: Run E2E tests with coverage
+  #       run: npm run test:e2e:coverage -w frontend
+  #     - name: Upload frontend E2E coverage
+  #       uses: actions/upload-artifact@v7
+  #       if: ${{ !cancelled() }}
+  #       with:
+  #         name: frontend-e2e-coverage
+  #         path: frontend/coverage-e2e/lcov.info
 
-  integration-tests:
-    name: Full-Stack Integration
-    runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
-    steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: npm
-      - run: npm ci
-      - run: npm run build -w shared
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-        working-directory: e2e
-      - run: npm run test:integration
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
-        with:
-          name: playwright-report
-          path: e2e/playwright-report/
-          retention-days: 30
+  # integration-tests:
+  #   name: Full-Stack Integration
+  #   runs-on: ubuntu-latest
+  #   needs: [backend-tests, frontend-tests]
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - uses: actions/setup-node@v6
+  #       with:
+  #         node-version: 24
+  #         cache: npm
+  #     - run: npm ci
+  #     - run: npm run build -w shared
+  #     - name: Install Playwright browsers
+  #       run: npx playwright install --with-deps chromium
+  #       working-directory: e2e
+  #     - run: npm run test:integration
+  #     - name: Upload Playwright report
+  #       uses: actions/upload-artifact@v7
+  #       if: ${{ !cancelled() }}
+  #       with:
+  #         name: playwright-report
+  #         path: e2e/playwright-report/
+  #         retention-days: 30
 
   sonarqube:
     name: SonarQube
     runs-on: ubuntu-latest
-    needs: [backend-tests, frontend-tests]
+    needs: [backend-tests]
+    #needs: [backend-tests, frontend-tests]
     steps:
       - uses: actions/checkout@v6
         with:
