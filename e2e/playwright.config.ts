@@ -20,7 +20,7 @@ export default defineConfig({
   webServer: [
     {
       command: 'npm run dev -w backend',
-      url: 'http://localhost:3000/api/todos',
+      url: 'http://localhost:3000/api/recipes',
       reuseExistingServer: !process.env.CI,
       cwd: '..',
       env: {
