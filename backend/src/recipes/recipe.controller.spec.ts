@@ -14,6 +14,7 @@ describe('RecipeController', () => {
     author: 'John',
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date('2026-01-01'),
+    ingredients: [],
   };
 
   beforeEach(async () => {
@@ -23,7 +24,6 @@ describe('RecipeController', () => {
         {
           provide: RecipeService,
           useValue: {
-            // MAYBE: more mockRecipe's?
             findAll: jest.fn().mockResolvedValue([mockRecipe]),
             findOne: jest.fn().mockResolvedValue(mockRecipe),
             create: jest.fn().mockResolvedValue(mockRecipe),
@@ -46,7 +46,6 @@ describe('RecipeController', () => {
     it('should return an array of recipes', async () => {
       const result = await controller.findAll();
       expect(result.data).toHaveLength(1);
-      // MAYBE: better compare?
       expect(result.data[0].title).toBe('Test recipe');
     });
   });

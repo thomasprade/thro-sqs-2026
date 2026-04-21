@@ -1,19 +1,8 @@
-import { RecipeEntity } from './recipe.entity';
 import { ApiResponse, Recipe } from '@app/shared';
-import { RecipeService } from './recipe.service';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { CreateRecipeDto, UpdateRecipeDto } from './dto';
-
-function toRecipe(entity: RecipeEntity): Recipe {
-  return {
-    id: entity.id,
-    title: entity.title,
-    description: entity.description,
-    author: entity.author,
-    createdAt: entity.createdAt.toISOString(),
-    updatedAt: entity.updatedAt.toISOString(),
-  };
-}
+import { RecipeService } from './recipe.service';
+import { toRecipe } from './recipes.mapper';
 
 @Controller('api/recipes')
 export class RecipeController {

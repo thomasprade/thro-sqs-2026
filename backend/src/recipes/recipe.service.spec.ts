@@ -7,7 +7,7 @@ import { RecipeService } from './recipe.service';
 
 describe('RecipeService', () => {
   let service: RecipeService;
-  let repo: jest.Mocked<Repository<RecipeEntity>>;
+  let recipeRepo: jest.Mocked<Repository<RecipeEntity>>;
 
   const mockRecipe: RecipeEntity = {
     id: 1,
@@ -16,6 +16,7 @@ describe('RecipeService', () => {
     author: 'John',
     createdAt: new Date('2026-01-01'),
     updatedAt: new Date('2026-01-01'),
+    ingredients: [],
   };
 
   beforeEach(async () => {
@@ -27,7 +28,7 @@ describe('RecipeService', () => {
           useValue: {
             find: jest.fn().mockResolvedValue([mockRecipe]),
             findOneBy: jest.fn().mockResolvedValue(mockRecipe),
-            create: jest.fn().mockResolvedValue(mockRecipe),
+            create: jest.fn().mockReturnValue(mockRecipe),
             save: jest.fn().mockResolvedValue(mockRecipe),
             remove: jest.fn().mockResolvedValue(undefined),
           },
@@ -36,7 +37,7 @@ describe('RecipeService', () => {
     }).compile();
 
     service = module.get(RecipeService);
-    repo = module.get(getRepositoryToken(RecipeEntity));
+    recipeRepo = module.get(getRepositoryToken(RecipeEntity));
   });
 
   it('should be defined', () => {
@@ -48,7 +49,7 @@ describe('RecipeService', () => {
       const result = await service.findAll();
       // MAYBE: isn't this better than the test in recipe.controller.spec.ts?
       expect(result).toEqual([mockRecipe]);
-      expect(repo.find).toHaveBeenCalledWith({ order: { createdAt: 'DESC' } });
+      expect(recipeRepo.find).toHaveBeenCalledWith({ order: { createdAt: 'DESC' } });
     });
   });
 
@@ -58,10 +59,8 @@ describe('RecipeService', () => {
       expect(result).toEqual(mockRecipe);
     });
 
-    // TODO: check if there are any other errors to be checked for
-    // TODO: above also for controller
     it('should throw NotFoundException if not found', async () => {
-      repo.findOneBy.mockResolvedValue(null);
+      recipeRepo.findOneBy.mockResolvedValue(null);
       await expect(service.findOne(42)).rejects.toThrow(NotFoundException);
     });
   });
@@ -74,20 +73,19 @@ describe('RecipeService', () => {
         author: 'Bob',
       });
       expect(result).toEqual(mockRecipe);
-      expect(repo.create).toHaveBeenCalledWith({
+      expect(recipeRepo.create).toHaveBeenCalledWith({
         title: 'Test recipe',
         description: 'Add Salt',
         author: 'Bob',
       });
-      expect(repo.save).toHaveBeenCalled();
+      expect(recipeRepo.save).toHaveBeenCalled();
     });
   });
 
   describe('update', () => {
     it('should update and return the recipe', async () => {
-      // TODO: what do these `...` do..?
       const updated = { ...mockRecipe, title: 'Updated' };
-      repo.save.mockResolvedValue(updated);
+      recipeRepo.save.mockResolvedValue(updated);
       const result = await service.update(1, { title: 'Updated', author: 'Jason' });
       expect(result.title).toBe('Updated');
     });
@@ -96,7 +94,7 @@ describe('RecipeService', () => {
   describe('remove', () => {
     it('should remove the todo', async () => {
       await service.remove(1);
-      expect(repo.remove).toHaveBeenCalledWith(mockRecipe);
+      expect(recipeRepo.remove).toHaveBeenCalledWith(mockRecipe);
     });
   });
 });
