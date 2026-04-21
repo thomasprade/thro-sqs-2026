@@ -5,9 +5,7 @@ import { IngredientsModule } from './ingredients/ingredients.module';
 import { RecipeEntity } from './recipes/recipe.entity';
 import { RecipeModule } from './recipes/recipe.module';
 
-const databasePath =
-  (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env
-    ?.DATABASE_PATH ?? './data/database.sqlite';
+const databasePath = process.env.DATABASE_PATH || './data/database.sqlite';
 
 @Module({
   imports: [

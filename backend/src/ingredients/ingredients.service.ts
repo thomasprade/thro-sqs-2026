@@ -43,6 +43,9 @@ export class IngredientsService {
     );
     await this.ingredientRepo.save(ingredients);
 
-    return this.getIngredients(recipeId);
+    return this.ingredientRepo.find({
+      where: { recipeId },
+      order: { id: 'ASC' },
+    });
   }
 }
