@@ -1,54 +1,50 @@
-import type { Todo } from '@app/shared';
+import type { Recipe, CreateRecipeDto } from '@app/shared';
 import { useCallback, useEffect, useState } from 'react';
-import { createTodo, deleteTodo, fetchTodos, updateTodo } from './api';
-import AddTodoForm from './components/AddTodoForm';
-import TodoList from './components/TodoList';
+import { createRecipe, deleteRecipe, fetchRecipes } from './api';
+import AddRecipeForm from './components/AddRecipeForm';
+import RecipeList from './components/RecipeList';
 
 export default function App() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
-  const loadTodos = useCallback(async () => {
+  const loadRecipes = useCallback(async () => {
     try {
       setError(null);
-      const data = await fetchTodos();
-      setTodos(data);
+      const data = await fetchRecipes();
+      setRecipes(data);
     } catch {
-      setError('Failed to load todos');
+      setError('Failed to load recipes');
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    loadTodos();
-  }, [loadTodos]);
+    loadRecipes();
+  }, [loadRecipes]);
 
-  const handleAdd = async (title: string) => {
-    const todo = await createTodo({ title });
-    setTodos((prev) => [todo, ...prev]);
-  };
-
-  const handleToggle = async (id: number, completed: boolean) => {
-    const updated = await updateTodo(id, { completed: !completed });
-    setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+  const handleAdd = async (dto: CreateRecipeDto) => {
+    const recipe = await createRecipe(dto);
+    setRecipes((prev) => [recipe, ...prev]);
+    setShowForm(false);
   };
 
   const handleDelete = async (id: number) => {
-    await deleteTodo(id);
-    setTodos((prev) => prev.filter((t) => t.id !== id));
+    await deleteRecipe(id);
+    setRecipes((prev) => prev.filter((r) => r.id !== id));
   };
 
   return (
     <div>
-      <h1>Todo App</h1>
-      <AddTodoForm onAdd={handleAdd} />
+      <h1>Recipes</h1>
+      <button onClick={() => setShowForm((v) => !v)}>{showForm ? 'Cancel' : 'New Recipe'}</button>
+      {showForm && <AddRecipeForm onAdd={handleAdd} />}
       {loading && <p>Loading...</p>}
       {error && <p role="alert">{error}</p>}
-      {!loading && !error && (
-        <TodoList todos={todos} onToggle={handleToggle} onDelete={handleDelete} />
-      )}
+      {!loading && !error && <RecipeList recipes={recipes} onDelete={handleDelete} />}
     </div>
   );
 }
