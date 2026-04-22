@@ -1,6 +1,6 @@
-import type { Recipe, CreateRecipeDto } from '@app/shared';
+import type { Recipe, CreateRecipeDto, UpdateRecipeDto } from '@app/shared';
 import { useCallback, useEffect, useState } from 'react';
-import { createRecipe, deleteRecipe, fetchRecipes } from './api';
+import { createRecipe, deleteRecipe, fetchRecipes, updateRecipe } from './api';
 import AddRecipeForm from './components/AddRecipeForm';
 import RecipeList from './components/RecipeList';
 
@@ -37,6 +37,11 @@ export default function App() {
     setRecipes((prev) => prev.filter((r) => r.id !== id));
   };
 
+  const handleUpdate = async (id: number, dto: UpdateRecipeDto) => {
+    const updated = await updateRecipe(id, dto);
+    setRecipes((recipes) => recipes.map((t) => (t.id == updated.id ? updated : t)));
+  };
+
   return (
     <div>
       <h1>Recipes</h1>
@@ -44,7 +49,9 @@ export default function App() {
       {showForm && <AddRecipeForm onAdd={handleAdd} />}
       {loading && <p>Loading...</p>}
       {error && <p role="alert">{error}</p>}
-      {!loading && !error && <RecipeList recipes={recipes} onDelete={handleDelete} />}
+      {!loading && !error && (
+        <RecipeList recipes={recipes} onDelete={handleDelete} onUpdate={handleUpdate} />
+      )}
     </div>
   );
 }
