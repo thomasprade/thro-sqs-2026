@@ -28,6 +28,8 @@ test.describe('Recipe App UI', () => {
   test('should delete a recipe', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('Delete Me');
+    await page.getByLabel('Recipe description').fill('Please');
+    await page.getByLabel('Recipe author').fill('I can not do this anymore');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
     await expect(page.getByText('Delete Me')).toBeVisible();
 
@@ -69,6 +71,9 @@ test.describe('Recipe App UI', () => {
   test('should close update form on cancel', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('Pasta');
+    await page.getByLabel('Recipe title').fill('Pasta');
+    await page.getByLabel('Recipe description').fill('A simple dish');
+    await page.getByLabel('Recipe author').fill('Doe');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
 
     await page.getByRole('button', { name: 'Update' }).click();
@@ -82,10 +87,14 @@ test.describe('Recipe App UI', () => {
   test('should only show one update form at a time', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('First Recipe');
+    await page.getByLabel('Recipe description').fill('A simple dish');
+    await page.getByLabel('Recipe author').fill('Doe');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
 
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('Second Recipe');
+    await page.getByLabel('Recipe description').fill('A simple dish');
+    await page.getByLabel('Recipe author').fill('Doe');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
 
     await page.getByTestId('recipe-1').getByRole('button', { name: 'Update' }).click();

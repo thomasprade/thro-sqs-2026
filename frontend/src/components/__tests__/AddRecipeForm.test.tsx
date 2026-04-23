@@ -40,10 +40,12 @@ describe('AddRecipeForm', () => {
 
     await user.type(screen.getByLabelText('Recipe title'), 'Pasta');
     await user.type(screen.getByLabelText('Recipe description'), 'A simple dish');
+    await user.type(screen.getByLabelText('Recipe author'), 'Bob');
     await user.click(screen.getByRole('button', { name: /add recipe/i }));
 
     expect(screen.getByLabelText('Recipe title')).toHaveValue('');
     expect(screen.getByLabelText('Recipe description')).toHaveValue('');
+    expect(screen.getByLabelText('Recipe author')).toHaveValue('');
   });
 
   it('disables fields and button while submitting', async () => {
@@ -57,7 +59,7 @@ describe('AddRecipeForm', () => {
     render(<AddRecipeForm onAdd={onAdd} />);
 
     await user.type(screen.getByLabelText('Recipe title'), 'Pasta');
-    await user.click(screen.getByRole('button', { name: /add recipe/i }));
+    user.click(screen.getByRole('button', { name: /add recipe/i }));
 
     await screen.findByRole('button', { name: /adding/i });
     expect(screen.getByLabelText('Recipe title')).toBeDisabled();

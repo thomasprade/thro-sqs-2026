@@ -52,22 +52,6 @@ describe('UpdateRecipeForm', () => {
     });
   });
 
-  it('empty optional fields become undefined in the dto', async () => {
-    const user = userEvent.setup();
-    const onUpdate = vi.fn().mockResolvedValue(undefined);
-    render(<UpdateRecipeForm recipe={mockRecipe} onUpdate={onUpdate} />);
-
-    await user.clear(screen.getByLabelText('Update recipe description'));
-    await user.clear(screen.getByLabelText('Update recipe author'));
-    await user.click(screen.getByRole('button', { name: /update recipe/i }));
-
-    expect(onUpdate).toHaveBeenCalledWith(1, {
-      title: 'Pasta',
-      description: undefined,
-      author: undefined,
-    });
-  });
-
   it('disables fields and button while submitting', async () => {
     const user = userEvent.setup();
     let resolve: () => void;
