@@ -22,6 +22,7 @@ export async function createRecipe(dto: CreateRecipeDto): Promise<Recipe> {
 
 export async function updateRecipe(id: number, dto: UpdateRecipeDto): Promise<Recipe> {
   const res = await fetch(`${API_BASE}/${id}`, {
+    // MAYBE: Change to PATCH
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),

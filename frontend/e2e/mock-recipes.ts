@@ -36,7 +36,7 @@ export async function installRecipeApiMock(page: Page): Promise<void> {
       return;
     }
 
-    if (request.method() === 'PATCH' && recipeIdMatch) {
+    if (request.method() === 'PUT' && recipeIdMatch) {
       const id = Number(recipeIdMatch[1]);
       const index = recipes.findIndex((r) => r.id === id);
       if (index === -1) {

@@ -61,7 +61,7 @@ test.describe('Recipe App UI', () => {
     await page.getByRole('button', { name: 'Update Recipe' }).click();
 
     await expect(page.getByLabel('Update recipe title')).not.toBeVisible();
-    await expect(page.getByRole('button', { name: 'Update' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Update', exact: true })).toBeVisible();
   });
 
   test('should close update form on cancel', async ({ page }) => {
