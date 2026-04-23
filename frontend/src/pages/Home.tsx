@@ -1,10 +1,10 @@
 import type { Recipe, CreateRecipeDto, UpdateRecipeDto } from '@app/shared';
 import { useCallback, useEffect, useState } from 'react';
-import { createRecipe, deleteRecipe, fetchRecipes, updateRecipe } from './api';
-import AddRecipeForm from './components/AddRecipeForm';
-import RecipeList from './components/RecipeList';
+import { createRecipe, deleteRecipe, fetchRecipes, updateRecipe } from '../api';
+import AddRecipeForm from '../components/AddRecipeForm';
+import RecipeList from '../components/RecipeList';
 
-export default function App() {
+export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
