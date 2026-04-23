@@ -19,8 +19,8 @@ export default function AddRecipeForm({ onAdd }: Readonly<AddRecipeFormProps>) {
     try {
       await onAdd({
         title: trimmed,
-        description: description.trim() || undefined,
-        author: author.trim() || undefined,
+        description: description.trim(),
+        author: author.trim(),
       });
       setTitle('');
       setDescription('');
@@ -48,7 +48,7 @@ export default function AddRecipeForm({ onAdd }: Readonly<AddRecipeFormProps>) {
         type="text"
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Description (optional)"
+        placeholder="Description"
         aria-label="Recipe description"
         disabled={submitting}
       />
@@ -56,7 +56,7 @@ export default function AddRecipeForm({ onAdd }: Readonly<AddRecipeFormProps>) {
         type="text"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
-        placeholder="Author (optional)"
+        placeholder="Author"
         aria-label="Recipe author"
         disabled={submitting}
       />

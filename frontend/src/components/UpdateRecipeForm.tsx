@@ -57,7 +57,7 @@ export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecip
         type="text"
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
-        placeholder="Author (optional)"
+        placeholder="Author"
         aria-label="Update recipe author"
         disabled={submitting}
       />

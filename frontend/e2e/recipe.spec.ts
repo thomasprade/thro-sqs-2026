@@ -36,6 +36,8 @@ test.describe('Recipe App UI', () => {
   test("should update a recipe's title", async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('Old Title');
+    await page.getByLabel('Recipe description').fill('A simple dish');
+    await page.getByLabel('Recipe author').fill('Doe');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
     await expect(page.getByText('Old Title')).toBeVisible();
 
@@ -50,6 +52,8 @@ test.describe('Recipe App UI', () => {
   test('should close update form after submit', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('Pasta');
+    await page.getByLabel('Recipe description').fill('A simple dish');
+    await page.getByLabel('Recipe author').fill('Doe');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
 
     await page.getByRole('button', { name: 'Update' }).click();

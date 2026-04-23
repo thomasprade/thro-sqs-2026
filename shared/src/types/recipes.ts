@@ -9,13 +9,12 @@ export interface Recipe {
 
 export interface CreateRecipeDto {
   title: string;
-  description?: string;
-  author?: string;
+  description: string;
+  author: string;
 }
 
 export interface UpdateRecipeDto {
   title?: string;
   description?: string;
-  // MAYBE: should the author be mutable?
   author?: string;
 }
