@@ -18,6 +18,8 @@ test.describe('Recipe App UI', () => {
   test('should add a new recipe', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     await page.getByLabel('Recipe title').fill('Playwright Pasta');
+    await page.getByLabel('Recipe description').fill('A simple dish');
+    await page.getByLabel('Recipe author').fill('Doe');
     await page.getByRole('button', { name: 'Add Recipe' }).click();
 
     await expect(page.getByText('Playwright Pasta')).toBeVisible();

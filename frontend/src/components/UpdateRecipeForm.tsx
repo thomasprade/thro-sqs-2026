@@ -1,12 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import type { Recipe, UpdateRecipeDto } from '@app/shared';
 
-interface AddRecipeFormProps {
+interface UpdateRecipeFormProps {
   recipe: Recipe;
   onUpdate: (id: number, dto: UpdateRecipeDto) => Promise<void>;
 }
 
-export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecipeFormProps>) {
+export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<UpdateRecipeFormProps>) {
   const [title, setTitle] = useState(recipe.title);
   const [description, setDescription] = useState(recipe.description);
   const [author, setAuthor] = useState(recipe.author);
@@ -21,8 +21,8 @@ export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecip
     try {
       await onUpdate(recipe.id, {
         title: trimmed,
-        description: description.trim() || undefined,
-        author: author.trim() || undefined,
+        description: description.trim(),
+        author: author.trim(),
       });
       setTitle(recipe.title);
       setDescription(recipe.description);

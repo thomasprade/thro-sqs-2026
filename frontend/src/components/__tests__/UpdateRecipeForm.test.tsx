@@ -78,7 +78,7 @@ describe('UpdateRecipeForm', () => {
     );
     render(<UpdateRecipeForm recipe={mockRecipe} onUpdate={onUpdate} />);
 
-    user.click(screen.getByRole('button', { name: /update recipe/i }));
+    await user.click(screen.getByRole('button', { name: /update recipe/i }));
 
     await screen.findByRole('button', { name: /updating/i });
     expect(screen.getByLabelText('Update recipe title')).toBeDisabled();

@@ -6,8 +6,8 @@ function createRecipe(id: number, dto: CreateRecipeDto): Recipe {
   return {
     id,
     title: dto.title,
-    description: dto.description ?? '',
-    author: dto.author ?? '',
+    description: dto.description,
+    author: dto.author,
     createdAt: timestamp,
     updatedAt: timestamp,
   };

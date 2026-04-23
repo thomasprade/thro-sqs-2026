@@ -57,7 +57,7 @@ describe('AddRecipeForm', () => {
     render(<AddRecipeForm onAdd={onAdd} />);
 
     await user.type(screen.getByLabelText('Recipe title'), 'Pasta');
-    user.click(screen.getByRole('button', { name: /add recipe/i }));
+    await user.click(screen.getByRole('button', { name: /add recipe/i }));
 
     await screen.findByRole('button', { name: /adding/i });
     expect(screen.getByLabelText('Recipe title')).toBeDisabled();

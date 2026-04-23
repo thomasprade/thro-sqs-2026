@@ -39,7 +39,7 @@ export default function App() {
 
   const handleUpdate = async (id: number, dto: UpdateRecipeDto) => {
     const updated = await updateRecipe(id, dto);
-    setRecipes((recipes) => recipes.map((t) => (t.id == updated.id ? updated : t)));
+    setRecipes((recipes) => recipes.map((t) => (t.id === updated.id ? updated : t)));
   };
 
   return (

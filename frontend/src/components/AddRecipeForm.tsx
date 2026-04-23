@@ -51,6 +51,7 @@ export default function AddRecipeForm({ onAdd }: Readonly<AddRecipeFormProps>) {
         placeholder="Description"
         aria-label="Recipe description"
         disabled={submitting}
+        required
       />
       <input
         type="text"
@@ -59,6 +60,7 @@ export default function AddRecipeForm({ onAdd }: Readonly<AddRecipeFormProps>) {
         placeholder="Author"
         aria-label="Recipe author"
         disabled={submitting}
+        required
       />
       <button type="submit" disabled={submitting || !title.trim()}>
         {submitting ? 'Adding...' : 'Add Recipe'}
