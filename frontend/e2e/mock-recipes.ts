@@ -1,4 +1,4 @@
-import type { CreateRecipeDto, Recipe } from '@app/shared';
+import type { CreateRecipeDto, Recipe, UpdateRecipeDto } from '@app/shared';
 import type { Page } from '@playwright/test';
 
 function createRecipe(id: number, dto: CreateRecipeDto): Recipe {
@@ -33,6 +33,19 @@ export async function installRecipeApiMock(page: Page): Promise<void> {
       const recipe = createRecipe(nextId++, dto);
       recipes.unshift(recipe);
       await route.fulfill({ json: { data: recipe } });
+      return;
+    }
+
+    if (request.method() === 'PATCH' && recipeIdMatch) {
+      const id = Number(recipeIdMatch[1]);
+      const index = recipes.findIndex((r) => r.id === id);
+      if (index === -1) {
+        await route.fulfill({ status: 404, json: { message: 'Recipe not found' } });
+        return;
+      }
+      const dto = request.postDataJSON() as UpdateRecipeDto;
+      recipes[index] = { ...recipes[index], ...dto, updatedAt: new Date().toISOString() };
+      await route.fulfill({ json: { data: recipes[index] } });
       return;
     }
 

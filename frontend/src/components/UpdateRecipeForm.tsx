@@ -41,7 +41,7 @@ export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecip
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder={recipe.title}
-        aria-label="Recipe title"
+        aria-label="Update recipe title"
         disabled={submitting}
         required
       />
@@ -50,7 +50,7 @@ export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecip
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder={recipe.description}
-        aria-label="Recipe description"
+        aria-label="Update recipe description"
         disabled={submitting}
       />
       <input
@@ -58,7 +58,7 @@ export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecip
         value={author}
         onChange={(e) => setAuthor(e.target.value)}
         placeholder="Author (optional)"
-        aria-label="Recipe author"
+        aria-label="Update recipe author"
         disabled={submitting}
       />
       <button type="submit" disabled={submitting || !title.trim()}>
