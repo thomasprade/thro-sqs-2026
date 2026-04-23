@@ -1,37 +1,38 @@
-import type { ApiResponse, CreateTodoDto, Todo, UpdateTodoDto } from '@app/shared';
+import type { ApiResponse, CreateRecipeDto, Recipe, UpdateRecipeDto } from '@app/shared';
 
-const API_BASE = '/api/todos';
+const API_BASE = '/api/recipes';
 
-export async function fetchTodos(): Promise<Todo[]> {
+export async function fetchRecipes(): Promise<Recipe[]> {
   const res = await fetch(API_BASE);
-  if (!res.ok) throw new Error('Failed to fetch todos');
-  const body = (await res.json()) as ApiResponse<Todo[]>;
+  if (!res.ok) throw new Error('Failed to fetch recipes');
+  const body = (await res.json()) as ApiResponse<Recipe[]>;
   return body.data;
 }
 
-export async function createTodo(dto: CreateTodoDto): Promise<Todo> {
+export async function createRecipe(dto: CreateRecipeDto): Promise<Recipe> {
   const res = await fetch(API_BASE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (!res.ok) throw new Error('Failed to create todo');
-  const body = (await res.json()) as ApiResponse<Todo>;
+  if (!res.ok) throw new Error('Failed to create recipe');
+  const body = (await res.json()) as ApiResponse<Recipe>;
   return body.data;
 }
 
-export async function updateTodo(id: number, dto: UpdateTodoDto): Promise<Todo> {
+export async function updateRecipe(id: number, dto: UpdateRecipeDto): Promise<Recipe> {
   const res = await fetch(`${API_BASE}/${id}`, {
+    // MAYBE: Change to PATCH
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(dto),
   });
-  if (!res.ok) throw new Error('Failed to update todo');
-  const body = (await res.json()) as ApiResponse<Todo>;
+  if (!res.ok) throw new Error('Failed to update recipe');
+  const body = (await res.json()) as ApiResponse<Recipe>;
   return body.data;
 }
 
-export async function deleteTodo(id: number): Promise<void> {
+export async function deleteRecipe(id: number): Promise<void> {
   const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Failed to delete todo');
+  if (!res.ok) throw new Error('Failed to delete recipe');
 }
