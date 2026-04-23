@@ -59,6 +59,8 @@ describe('AddRecipeForm', () => {
     render(<AddRecipeForm onAdd={onAdd} />);
 
     await user.type(screen.getByLabelText('Recipe title'), 'Pasta');
+    await user.type(screen.getByLabelText('Recipe description'), 'A simple dish');
+    await user.type(screen.getByLabelText('Recipe author'), 'Doe');
     user.click(screen.getByRole('button', { name: /add recipe/i }));
 
     await screen.findByRole('button', { name: /adding/i });
