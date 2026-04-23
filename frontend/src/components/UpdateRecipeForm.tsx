@@ -14,6 +14,7 @@ export default function UpdateRecipeForm({ recipe, onUpdate }: Readonly<AddRecip
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     const trimmed = title.trim();
     if (!trimmed) return;
     setSubmitting(true);
