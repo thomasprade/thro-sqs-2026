@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RecipeEntity } from '../recipes/recipe.entity';
-import { CreateIngredientDto } from './dto';
+import { CreateIngredientDto, UpdateIngredientDto } from './dto';
 import { IngredientEntity } from './ingredient.entity';
 
 @Injectable()
@@ -20,6 +20,14 @@ export class IngredientsService {
       throw new NotFoundException(`Recipe #${recipeId} not found`);
     }
     return recipe;
+  }
+
+  private async findOne(id: number): Promise<IngredientEntity> {
+    const ingredient = await this.ingredientRepo.findOneBy({ id });
+    if (!ingredient) {
+      throw new NotFoundException(`Ingredient #${id} not found`);
+    }
+    return ingredient;
   }
 
   async getIngredients(recipeId: number): Promise<IngredientEntity[]> {
@@ -47,5 +55,19 @@ export class IngredientsService {
       where: { recipeId },
       order: { id: 'ASC' },
     });
+  }
+
+  async updateIngredient(
+    ingredientId: number,
+    dto: UpdateIngredientDto,
+  ): Promise<IngredientEntity> {
+    const ingredient = await this.findOne(ingredientId);
+    Object.assign(ingredient, dto);
+    return this.ingredientRepo.save(ingredient);
+  }
+
+  async removeIngredient(ingredientId: number): Promise<void> {
+    const ingredient = await this.findOne(ingredientId);
+    await this.ingredientRepo.remove(ingredient);
   }
 }

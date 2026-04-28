@@ -52,17 +52,31 @@ describe('RecipeController', () => {
 
   describe('create', () => {
     it('should create a recipe', async () => {
-      const result = await controller.create({
+      const create = {
         title: 'Test recipe',
         description: 'More Salt',
         author: 'Justin',
-      });
+      };
+
+      const result = await controller.create(create);
+
       expect(result.data.title).toBe('Test recipe');
-      expect(service.create).toHaveBeenCalledWith({
-        title: 'Test recipe',
-        description: 'More Salt',
-        author: 'Justin',
-      });
+      expect(service.create).toHaveBeenCalledWith(create);
+    });
+  });
+
+  describe('update', () => {
+    it('should update a recipe and return it', async () => {
+      const update = {
+        title: 'Update recipe',
+        description: 'Even more Salt',
+        author: 'Still Justin',
+      };
+
+      const result = await controller.update(1, update);
+
+      expect(result.data.id).toBe(1);
+      expect(service.update).toHaveBeenCalledWith(1, update);
     });
   });
 
