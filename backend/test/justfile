@@ -1,0 +1,41 @@
+# Manual tests for the backend that can be run with eg: `just recipe-get 5`
+host := "localhost"
+port := "3000"
+base := "http://" + host + ":" + port + "/api"
+
+# Recipes
+recipe-list:
+    curl {{ base }}/recipes
+
+recipe-get id="1":
+    curl {{ base }}/recipes/{{ id }}
+
+recipe-create:
+    curl -X POST {{ base }}/recipes \
+      -H "Content-Type: application/json" \
+      -d '{"title": "Pasta Carbonara", "description": "Classic Italian pasta", "author": "Mario"}'
+
+recipe-update id="1":
+    curl -X PUT {{ base }}/recipes/{{ id }} \
+      -H "Content-Type: application/json" \
+      -d '{"title": "Updated Pasta Carbonara", "description": "Updated description", "author": "Updated Mario"}'
+
+recipe-delete id="1":
+    curl -X DELETE {{ base }}/recipes/{{ id }}
+
+# Ingredients
+ingredient-list recipe="1":
+    curl {{ base }}/recipes/{{ recipe }}/ingredients
+
+ingredient-add recipe="1":
+    curl -X POST {{ base }}/recipes/{{ recipe }}/ingredients \
+      -H "Content-Type: application/json" \
+      -d '[{"name": "Egg", "amount": 4, "unit": "pcs"}, {"name": "Pancetta", "amount": 150, "unit": "g"}]'
+
+ingredient-update recipe="1" ingredient="1":
+    curl -X PUT {{ base }}/recipes/{{ recipe }}/ingredients/{{ ingredient }} \
+      -H "Content-Type: application/json" \
+      -d '{"name": "Better Eggs", "amount": 200, "unit": "g"}'
+
+ingredient-delete recipe="1" ingredient="1":
+    curl -X DELETE {{ base }}/recipes/{{ recipe }}/ingredients/{{ ingredient }}
