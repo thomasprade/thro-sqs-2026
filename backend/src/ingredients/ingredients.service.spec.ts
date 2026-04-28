@@ -46,8 +46,10 @@ describe('IngredientsService', () => {
           provide: getRepositoryToken(IngredientEntity),
           useValue: {
             find: jest.fn().mockResolvedValue([mockIngredient]),
+            findOneBy: jest.fn().mockResolvedValue(mockIngredient),
             create: jest.fn().mockReturnValue([mockIngredient]),
-            save: jest.fn().mockResolvedValue([mockIngredient]),
+            save: jest.fn().mockResolvedValue(mockIngredient),
+            remove: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],
@@ -102,6 +104,36 @@ describe('IngredientsService', () => {
     it('should throw NotFoundException if recipe does not exist', async () => {
       recipeRepo.findOneBy.mockResolvedValue(null);
       await expect(service.addIngredients(99, [])).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('updateIngredient', () => {
+    it('should update the ingredient fields and return the saved entity', async () => {
+      const dto = { name: 'Updated Milk', amount: 1, unit: 'L' };
+      const result = await service.updateIngredient(1, dto);
+
+      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(ingredientRepo.save).toHaveBeenCalledWith({ ...mockIngredient, ...dto });
+      expect(result).toEqual(mockIngredient);
+    });
+
+    it('should throw NotFoundException if ingredient does not exist', async () => {
+      ingredientRepo.findOneBy.mockResolvedValue(null);
+      await expect(service.updateIngredient(99, { name: 'X' })).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('removeIngredient', () => {
+    it('should remove the ingredient', async () => {
+      await service.removeIngredient(1);
+
+      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(ingredientRepo.remove).toHaveBeenCalledWith(mockIngredient);
+    });
+
+    it('should throw NotFoundException if ingredient does not exist', async () => {
+      ingredientRepo.findOneBy.mockResolvedValue(null);
+      await expect(service.removeIngredient(99)).rejects.toThrow(NotFoundException);
     });
   });
 });

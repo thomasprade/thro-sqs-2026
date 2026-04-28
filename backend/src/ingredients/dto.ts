@@ -3,7 +3,7 @@ import {
   UpdateIngredientDto as sharedUpdateIngredientDto,
 } from '@app/shared';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateIngredientDto implements sharedCreateIngredientDto {
   @IsString()
@@ -20,12 +20,15 @@ export class CreateIngredientDto implements sharedCreateIngredientDto {
 }
 
 export class UpdateIngredientDto implements sharedUpdateIngredientDto {
+  @IsOptional()
   @IsString()
   name?: string;
 
+  @IsOptional()
   @IsNumber()
   amount?: number;
 
+  @IsOptional()
   @IsString()
   unit?: string;
 }
