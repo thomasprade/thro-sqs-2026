@@ -1,6 +1,6 @@
 import { ApiResponse, Ingredient } from '@app/shared';
 import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post } from '@nestjs/common';
-import { CreateIngredientDto } from './dto';
+import { CreateIngredientDto } from './ingredient.dto';
 import { toIngredient } from './ingredients.mapper';
 import { IngredientsService } from './ingredients.service';
 
