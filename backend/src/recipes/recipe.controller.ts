@@ -1,6 +1,6 @@
 import { ApiResponse, Recipe } from '@app/shared';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { CreateRecipeDto, UpdateRecipeDto } from './dto';
+import { CreateRecipeDto, UpdateRecipeDto } from './recipe.dto';
 import { RecipeService } from './recipe.service';
 import { toRecipe } from './recipes.mapper';
 

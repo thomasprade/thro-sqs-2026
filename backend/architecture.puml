@@ -1,0 +1,18 @@
+@startuml
+  component [controller]
+  component [service]
+  component [entity]
+  component [dto]
+  component [mapper]
+  component [module]
+
+  [controller] --> [service]
+  [controller] --> [dto]
+  [controller] --> [mapper]
+  [service] --> [entity]
+  [service] --> [dto]
+  [mapper] --> [entity]
+  [module] --> [controller]
+  [module] --> [service]
+  [module] --> [entity]
+@enduml
