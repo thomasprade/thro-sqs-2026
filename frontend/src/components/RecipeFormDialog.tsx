@@ -82,7 +82,7 @@ export default function RecipeFormDialog({
           {isEdit ? 'Edit Recipe' : 'Add Recipe'}
         </DialogTitle>
         <DialogContent
-          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '8px !important' }}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}
         >
           <TextField
             label="Title"

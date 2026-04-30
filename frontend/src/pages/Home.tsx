@@ -55,7 +55,11 @@ export default function Home() {
   return (
     <div>
       <h1>Recipes</h1>
-      <Button variant="contained" onClick={() => setDialogState({ open: true })}>
+      <Button
+        variant="contained"
+        onClick={() => setDialogState({ open: true })}
+        sx={{ display: 'block', ml: 'auto', mb: 2 }}
+      >
         New Recipe
       </Button>
       <RecipeFormDialog
