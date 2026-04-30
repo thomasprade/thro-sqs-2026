@@ -1,4 +1,4 @@
-import type { Recipe, UpdateRecipeDto } from '@app/shared';
+import type { Recipe } from '@app/shared';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -12,18 +12,16 @@ import {
   TableRow,
   TextField,
 } from '@mui/material';
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import UpdateRecipeForm from './UpdateRecipeForm';
 
 interface RecipeListProps {
   recipes: Recipe[];
   onDelete: (id: number) => void;
-  onUpdate: (id: number, dto: UpdateRecipeDto) => Promise<void>;
+  onEdit: (recipe: Recipe) => void;
 }
 
-export default function RecipeList({ recipes, onUpdate, onDelete }: Readonly<RecipeListProps>) {
-  const [editingId, setEditingId] = useState<number | null>(null);
+export default function RecipeList({ recipes, onEdit, onDelete }: Readonly<RecipeListProps>) {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const navigate = useNavigate();
@@ -36,11 +34,6 @@ export default function RecipeList({ recipes, onUpdate, onDelete }: Readonly<Rec
   if (recipes.length === 0) {
     return <p data-testid="empty-state">No recipes yet. Add one above!</p>;
   }
-
-  const handleUpdate = async (id: number, dto: UpdateRecipeDto) => {
-    await onUpdate(id, dto);
-    setEditingId(null);
-  };
 
   const filteredRecipes = recipes.filter((recipe) => {
     const query = debouncedQuery.toLowerCase();
@@ -67,7 +60,7 @@ export default function RecipeList({ recipes, onUpdate, onDelete }: Readonly<Rec
             <TableRow>
               <TableCell sx={{ width: '25%' }}>Recipe Name</TableCell>
               <TableCell sx={{ width: '45%' }}>Recipe Description</TableCell>
-              <TableCell sx={{ width: '15%'}}>Author</TableCell>
+              <TableCell sx={{ width: '15%' }}>Author</TableCell>
               <TableCell sx={{ width: '15%' }} align="right">
                 Actions
               </TableCell>
@@ -82,47 +75,39 @@ export default function RecipeList({ recipes, onUpdate, onDelete }: Readonly<Rec
               </TableRow>
             ) : (
               filteredRecipes.map((recipe) => (
-                <Fragment key={recipe.id}>
-                  <TableRow
-                    data-testid={`recipe-${recipe.id}`}
-                    hover
-                    onClick={() => navigate('/demo')}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell>{recipe.title}</TableCell>
-                    <TableCell>{recipe.description}</TableCell>
-                    <TableCell>{recipe.author}</TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        size="small"
-                        aria-label={`Edit ${recipe.title}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingId((id) => (id === recipe.id ? null : recipe.id));
-                        }}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        aria-label={`Delete ${recipe.title}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onDelete(recipe.id);
-                        }}
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                  {editingId === recipe.id && (
-                    <TableRow key={`edit-${recipe.id}`}>
-                      <TableCell colSpan={3} onClick={(e) => e.stopPropagation()}>
-                        <UpdateRecipeForm recipe={recipe} onUpdate={handleUpdate} />
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </Fragment>
+                <TableRow
+                  key={recipe.id}
+                  data-testid={`recipe-${recipe.id}`}
+                  hover
+                  onClick={() => navigate('/demo')}
+                  sx={{ cursor: 'pointer' }}
+                >
+                  <TableCell>{recipe.title}</TableCell>
+                  <TableCell>{recipe.description}</TableCell>
+                  <TableCell>{recipe.author}</TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      size="small"
+                      aria-label={`Edit ${recipe.title}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(recipe);
+                      }}
+                    >
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      aria-label={`Delete ${recipe.title}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(recipe.id);
+                      }}
+                    >
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
               ))
             )}
           </TableBody>

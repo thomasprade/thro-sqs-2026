@@ -17,20 +17,22 @@ test.describe('Recipe App UI', () => {
 
   test('should add a new recipe', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('Playwright Pasta');
-    await page.getByLabel('Recipe description').fill('A simple dish');
-    await page.getByLabel('Recipe author').fill('Doe');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Playwright Pasta');
+    await dialog.getByLabel('Description').fill('A simple dish');
+    await dialog.getByLabel('Author').fill('Doe');
+    await dialog.getByRole('button', { name: 'Save' }).click();
 
     await expect(page.getByText('Playwright Pasta')).toBeVisible();
   });
 
   test('should delete a recipe', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('Delete Me');
-    await page.getByLabel('Recipe description').fill('Please');
-    await page.getByLabel('Recipe author').fill('I can not do this anymore');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Delete Me');
+    await dialog.getByLabel('Description').fill('Please');
+    await dialog.getByLabel('Author').fill('I can not do this anymore');
+    await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Delete Me')).toBeVisible();
 
     await page.getByLabel('Delete Delete Me').click();
@@ -39,69 +41,71 @@ test.describe('Recipe App UI', () => {
 
   test("should update a recipe's title", async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('Old Title');
-    await page.getByLabel('Recipe description').fill('A simple dish');
-    await page.getByLabel('Recipe author').fill('Doe');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    let dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Old Title');
+    await dialog.getByLabel('Description').fill('A simple dish');
+    await dialog.getByLabel('Author').fill('Doe');
+    await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Old Title')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Update' }).click();
-    await page.getByLabel('Update recipe title').fill('New Title');
-    await page.getByRole('button', { name: 'Update Recipe' }).click();
+    await page.getByLabel('Edit Old Title').click();
+    dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('New Title');
+    await dialog.getByRole('button', { name: 'Save' }).click();
 
     await expect(page.getByText('New Title')).toBeVisible();
     await expect(page.getByText('Old Title')).not.toBeVisible();
   });
 
-  test('should close update form after submit', async ({ page }) => {
+  test('should close dialog after save', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('Pasta');
-    await page.getByLabel('Recipe description').fill('A simple dish');
-    await page.getByLabel('Recipe author').fill('Doe');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Pasta');
+    await dialog.getByLabel('Description').fill('A simple dish');
+    await dialog.getByLabel('Author').fill('Doe');
+    await dialog.getByRole('button', { name: 'Save' }).click();
 
-    await page.getByRole('button', { name: 'Update' }).click();
-    await page.getByLabel('Update recipe title').fill('Updated Pasta');
-    await page.getByRole('button', { name: 'Update Recipe' }).click();
-
-    await expect(page.getByLabel('Update recipe title')).not.toBeVisible();
-    await expect(page.getByRole('button', { name: 'Update', exact: true })).toBeVisible();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
   });
 
-  test('should close update form on cancel', async ({ page }) => {
+  test('should close dialog on cancel when no changes', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('Pasta');
-    await page.getByLabel('Recipe title').fill('Pasta');
-    await page.getByLabel('Recipe description').fill('A simple dish');
-    await page.getByLabel('Recipe author').fill('Doe');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
 
-    await page.getByRole('button', { name: 'Update' }).click();
-    await expect(page.getByLabel('Update recipe title')).toBeVisible();
-
-    await page.getByRole('button', { name: 'Cancel' }).click();
-    await expect(page.getByLabel('Update recipe title')).not.toBeVisible();
-    await expect(page.getByText('Pasta')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
   });
 
-  test('should only show one update form at a time', async ({ page }) => {
+  test('should show unsaved changes warning when cancelling with dirty fields', async ({
+    page,
+  }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('First Recipe');
-    await page.getByLabel('Recipe description').fill('A simple dish');
-    await page.getByLabel('Recipe author').fill('Doe');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Something');
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
 
+    await expect(page.getByRole('heading', { name: 'Unsaved Changes' })).toBeVisible();
+  });
+
+  test('should discard changes when clicking Discard in warning', async ({ page }) => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
-    await page.getByLabel('Recipe title').fill('Second Recipe');
-    await page.getByLabel('Recipe description').fill('A simple dish');
-    await page.getByLabel('Recipe author').fill('Doe');
-    await page.getByRole('button', { name: 'Add Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Something');
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
 
-    await page.getByTestId('recipe-1').getByRole('button', { name: 'Update' }).click();
-    await expect(page.getByTestId('recipe-1').getByLabel('Update recipe title')).toBeVisible();
+    await page.getByRole('button', { name: 'Discard' }).click();
+    await expect(page.getByRole('dialog')).not.toBeVisible();
+  });
 
-    await page.getByTestId('recipe-2').getByRole('button', { name: 'Update' }).click();
-    await expect(page.getByTestId('recipe-1').getByLabel('Update recipe title')).not.toBeVisible();
-    await expect(page.getByTestId('recipe-2').getByLabel('Update recipe title')).toBeVisible();
+  test('should keep editing when clicking Keep Editing in warning', async ({ page }) => {
+    await page.getByRole('button', { name: 'New Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Something');
+    await dialog.getByRole('button', { name: 'Cancel' }).click();
+
+    await page.getByRole('button', { name: 'Keep Editing' }).click();
+    await expect(page.getByRole('heading', { name: 'Unsaved Changes' })).not.toBeVisible();
+    await expect(dialog.getByLabel('Title')).toHaveValue('Something');
   });
 });
