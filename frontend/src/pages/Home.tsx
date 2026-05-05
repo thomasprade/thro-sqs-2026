@@ -32,14 +32,15 @@ export default function Home() {
     loadRecipes();
   }, [loadRecipes]);
 
-  const handleSave = async (dto: CreateRecipeDto | UpdateRecipeDto) => {
-    if (dialogState.recipe) {
-      const updated = await updateRecipe(dialogState.recipe.id, dto);
-      setRecipes((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
-    } else {
-      const created = await createRecipe(dto as CreateRecipeDto);
-      setRecipes((prev) => [created, ...prev]);
-    }
+  const handleCreate = async (dto: CreateRecipeDto) => {
+    const created = await createRecipe(dto);
+    setRecipes((prev) => [created, ...prev]);
+    setDialogState({ open: false });
+  };
+
+  const handleUpdate = async (dto: UpdateRecipeDto) => {
+    const updated = await updateRecipe(dialogState.recipe!.id, dto);
+    setRecipes((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
     setDialogState({ open: false });
   };
 
@@ -62,12 +63,21 @@ export default function Home() {
       >
         New Recipe
       </Button>
-      <RecipeFormDialog
-        open={dialogState.open}
-        recipe={dialogState.recipe}
-        onSave={handleSave}
-        onClose={() => setDialogState({ open: false })}
-      />
+      {dialogState.recipe ? (
+        <RecipeFormDialog
+          open={dialogState.open}
+          recipe={dialogState.recipe}
+          onSave={handleUpdate}
+          onClose={() => setDialogState({ open: false })}
+        />
+      ) : (
+        <RecipeFormDialog
+          open={dialogState.open}
+          recipe={undefined}
+          onSave={handleCreate}
+          onClose={() => setDialogState({ open: false })}
+        />
+      )}
       {loading && <p>Loading...</p>}
       {error && <p role="alert">{error}</p>}
       {!loading && !error && (

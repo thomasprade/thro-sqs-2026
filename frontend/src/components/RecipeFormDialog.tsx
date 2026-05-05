@@ -7,15 +7,16 @@ import {
   DialogTitle,
   TextField,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import UnsavedChangesDialog from './UnsavedChangesDialog';
 
-interface RecipeFormDialogProps {
+type RecipeFormDialogProps = {
   open: boolean;
-  recipe?: Recipe;
-  onSave: (dto: CreateRecipeDto | UpdateRecipeDto) => Promise<void>;
   onClose: () => void;
-}
+} & (
+  | { recipe: undefined; onSave: (dto: CreateRecipeDto) => Promise<void> }
+  | { recipe: Recipe; onSave: (dto: UpdateRecipeDto) => Promise<void> }
+);
 
 export default function RecipeFormDialog({
   open,
@@ -33,6 +34,16 @@ export default function RecipeFormDialog({
   const [author, setAuthor] = useState(initialAuthor);
   const [submitting, setSubmitting] = useState(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
+
+  useEffect(() => {
+    if (open) {
+      setTitle(recipe?.title ?? '');
+      setDescription(recipe?.description ?? '');
+      setAuthor(recipe?.author ?? '');
+    }
+    setSubmitting(false);
+    setShowUnsavedWarning(false);
+  }, [open, recipe?.id]);
 
   const isDirty =
     title !== initialTitle || description !== initialDescription || author !== initialAuthor;

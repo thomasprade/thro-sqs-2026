@@ -1,5 +1,6 @@
 import type { Recipe } from '@app/shared';
 import { act, fireEvent, render, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RecipeList from '../RecipeList';
@@ -29,7 +30,7 @@ const mockRecipes: Recipe[] = [
   },
 ];
 
-function renderWithRouter(ui: React.ReactElement) {
+function renderWithRouter(ui: ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
