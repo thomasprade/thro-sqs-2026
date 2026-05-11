@@ -10,6 +10,7 @@ import { RecipeModule } from '../src/recipes/recipe.module';
 describe('Ingredients (e2e)', () => {
   let app: INestApplication;
   let recipeId: number;
+  let crossRecipeId: number;
   let ingredientId: number;
 
   beforeAll(async () => {
@@ -30,7 +31,7 @@ describe('Ingredients (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
     await app.init();
 
-    const res = await request(app.getHttpServer())
+    const res_normal = await request(app.getHttpServer())
       .post('/api/recipes')
       .send({
         title: 'Ingredients Recipe',
@@ -39,7 +40,18 @@ describe('Ingredients (e2e)', () => {
       })
       .expect(201);
 
-    recipeId = res.body.data.id;
+    recipeId = res_normal.body.data.id;
+
+    const res_cross = await request(app.getHttpServer())
+      .post('/api/recipes')
+      .send({
+        title: 'Ingredients Recipe - Cross Access',
+        description: 'Recipe used for ingredients cross access tests',
+        author: 'E2E Author',
+      })
+      .expect(201);
+
+    crossRecipeId = res_cross.body.data.id;
   });
 
   afterAll(async () => {
@@ -120,6 +132,13 @@ describe('Ingredients (e2e)', () => {
       .expect(404);
   });
 
+  it('PUT /api/recipes/:id/ingredients/:ingredientId — should return 404 for ingredient of different recipe', async () => {
+    await request(app.getHttpServer())
+      .put(`/api/recipes/${crossRecipeId}/ingredients/${ingredientId}`)
+      .send({ name: 'Updated Milk', amount: 1, unit: 'L' })
+      .expect(404);
+  });
+
   it('DELETE /api/recipes/:id/ingredients/:ingredientId — should delete an ingredient', async () => {
     const res = await request(app.getHttpServer())
       .delete(`/api/recipes/${recipeId}/ingredients/${ingredientId}`)
@@ -131,6 +150,12 @@ describe('Ingredients (e2e)', () => {
   it('DELETE /api/recipes/:id/ingredients/:ingredientId — should return 404 after already deleted', async () => {
     await request(app.getHttpServer())
       .delete(`/api/recipes/${recipeId}/ingredients/${ingredientId}`)
+      .expect(404);
+  });
+
+  it('DELETE /api/recipes/:id/ingredients/:ingredientId — should return 404 for ingredient of different recipe', async () => {
+    await request(app.getHttpServer())
+      .delete(`/api/recipes/${crossRecipeId}/ingredients/${ingredientId}`)
       .expect(404);
   });
 });

@@ -43,18 +43,20 @@ export class IngredientsController {
 
   @Put(':ingredientId')
   async updateIngredient(
+    @Param('recipeId', ParseIntPipe) recipeId: number,
     @Param('ingredientId', ParseIntPipe) ingredientId: number,
     @Body() dto: UpdateIngredientDto,
   ): Promise<ApiResponse<Ingredient>> {
-    const ingredient = await this.ingredientsService.updateIngredient(ingredientId, dto);
+    const ingredient = await this.ingredientsService.updateIngredient(recipeId, ingredientId, dto);
     return { data: toIngredient(ingredient) };
   }
 
   @Delete(':ingredientId')
   async deleteIngredient(
+    @Param('recipeId', ParseIntPipe) recipeId: number,
     @Param('ingredientId', ParseIntPipe) ingredientId: number,
   ): Promise<{ message: string }> {
-    await this.ingredientsService.removeIngredient(ingredientId);
+    await this.ingredientsService.removeIngredient(recipeId, ingredientId);
     return { message: `Ingredient #${ingredientId} deleted` };
   }
 }

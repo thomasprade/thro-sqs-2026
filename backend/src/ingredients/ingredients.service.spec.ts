@@ -32,6 +32,16 @@ describe('IngredientsService', () => {
     updatedAt: new Date('2026-01-01'),
   };
 
+  const mockCrossRecipe: RecipeEntity = {
+    id: 2,
+    title: 'Test cross access recipe',
+    description: 'Boil some meat',
+    author: 'John',
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+    ingredients: [],
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -108,32 +118,48 @@ describe('IngredientsService', () => {
   });
 
   describe('updateIngredient', () => {
-    it('should update the ingredient fields and return the saved entity', async () => {
+    it('should look up by both recipeId and ingredientId and return the saved entity', async () => {
       const dto = { name: 'Updated Milk', amount: 1, unit: 'L' };
-      const result = await service.updateIngredient(1, dto);
+      const result = await service.updateIngredient(7, 42, dto);
 
-      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 42, recipeId: 7 });
       expect(ingredientRepo.save).toHaveBeenCalledWith({ ...mockIngredient, ...dto });
       expect(result).toEqual(mockIngredient);
     });
 
     it('should throw NotFoundException if ingredient does not exist', async () => {
       ingredientRepo.findOneBy.mockResolvedValue(null);
-      await expect(service.updateIngredient(99, { name: 'X' })).rejects.toThrow(NotFoundException);
+      await expect(service.updateIngredient(1, 99, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw NotFoundException if ingredient does not belong to recipeId', async () => {
+      ingredientRepo.findOneBy.mockResolvedValue(null);
+      await expect(service.updateIngredient(2, 1, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 1, recipeId: 2 });
     });
   });
 
   describe('removeIngredient', () => {
-    it('should remove the ingredient', async () => {
-      await service.removeIngredient(1);
+    it('should look up by both recipeId and ingredientId and remove the ingredient', async () => {
+      await service.removeIngredient(7, 42);
 
-      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 42, recipeId: 7 });
       expect(ingredientRepo.remove).toHaveBeenCalledWith(mockIngredient);
     });
 
     it('should throw NotFoundException if ingredient does not exist', async () => {
       ingredientRepo.findOneBy.mockResolvedValue(null);
-      await expect(service.removeIngredient(99)).rejects.toThrow(NotFoundException);
+      await expect(service.removeIngredient(1, 99)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if ingredient does not belong to recipeId', async () => {
+      ingredientRepo.findOneBy.mockResolvedValue(null);
+      await expect(service.removeIngredient(2, 1)).rejects.toThrow(NotFoundException);
+      expect(ingredientRepo.findOneBy).toHaveBeenCalledWith({ id: 1, recipeId: 2 });
     });
   });
 });

@@ -22,10 +22,13 @@ export class IngredientsService {
     return recipe;
   }
 
-  private async findOne(id: number): Promise<IngredientEntity> {
-    const ingredient = await this.ingredientRepo.findOneBy({ id });
+  private async findOne(recipeId: number, ingredientId: number): Promise<IngredientEntity> {
+    const ingredient = await this.ingredientRepo.findOneBy({
+      id: ingredientId,
+      recipeId: recipeId,
+    });
     if (!ingredient) {
-      throw new NotFoundException(`Ingredient #${id} not found`);
+      throw new NotFoundException(`Ingredient #${ingredientId} not found for recipe #${recipeId}`);
     }
     return ingredient;
   }
@@ -58,16 +61,17 @@ export class IngredientsService {
   }
 
   async updateIngredient(
+    recipeId: number,
     ingredientId: number,
     dto: UpdateIngredientDto,
   ): Promise<IngredientEntity> {
-    const ingredient = await this.findOne(ingredientId);
+    const ingredient = await this.findOne(recipeId, ingredientId);
     Object.assign(ingredient, dto);
     return this.ingredientRepo.save(ingredient);
   }
 
-  async removeIngredient(ingredientId: number): Promise<void> {
-    const ingredient = await this.findOne(ingredientId);
+  async removeIngredient(recipeId: number, ingredientId: number): Promise<void> {
+    const ingredient = await this.findOne(recipeId, ingredientId);
     await this.ingredientRepo.remove(ingredient);
   }
 }
