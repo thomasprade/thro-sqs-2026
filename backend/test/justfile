@@ -1,4 +1,4 @@
-# Manual tests for the backend that can be run with eg: `just recipe-get 5`
+# Manual tests for the backend that can be run with e.g.: `just recipe-get 5`
 host := "localhost"
 port := "3000"
 base := "http://" + host + ":" + port + "/api"

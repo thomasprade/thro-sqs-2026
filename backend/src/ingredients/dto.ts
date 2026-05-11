@@ -24,6 +24,7 @@ export class UpdateIngredientDto implements sharedUpdateIngredientDto {
   @IsString()
   name?: string;
 
+  @Type(() => Number)
   @IsOptional()
   @IsNumber()
   amount?: number;
