@@ -74,5 +74,8 @@
         "entry": "tests/**/*.spec.ts"
       }
     }
+  },
+  "dependencies": {
+    "archunit": "^2.3.0"
   }
 }

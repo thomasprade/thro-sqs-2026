@@ -1,8 +1,15 @@
 import type { Recipe } from '@app/shared';
-import { fireEvent, render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import type { ReactElement } from 'react';
+import { MemoryRouter } from 'react-router';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RecipeList from '../RecipeList';
+
+const mockNavigate = vi.fn();
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return { ...actual, useNavigate: () => mockNavigate };
+});
 
 const mockRecipes: Recipe[] = [
   {
@@ -16,139 +23,129 @@ const mockRecipes: Recipe[] = [
   {
     id: 2,
     title: 'Salad',
-    description: '',
+    description: 'Fresh garden salad',
     author: '',
     createdAt: '2025-01-02T00:00:00.000Z',
     updatedAt: '2025-01-02T00:00:00.000Z',
   },
 ];
 
+function renderWithRouter(ui: ReactElement) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+}
+
 describe('RecipeList', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear();
+  });
+
   it('renders empty state when no recipes', () => {
-    render(<RecipeList recipes={[]} onUpdate={vi.fn()} onDelete={vi.fn()} />);
+    renderWithRouter(<RecipeList recipes={[]} onEdit={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByTestId('empty-state')).toBeInTheDocument();
   });
 
-  it('renders a list of recipes', () => {
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={vi.fn()} />);
+  it('renders a table with recipes', () => {
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByText('Pasta')).toBeInTheDocument();
     expect(screen.getByText('Salad')).toBeInTheDocument();
+    expect(screen.getByText('Simple pasta dish')).toBeInTheDocument();
   });
 
-  it('renders author and description when present', () => {
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={vi.fn()} />);
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByText('Simple pasta dish')).toBeInTheDocument();
+  it('renders table headers', () => {
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    expect(screen.getByText('Recipe Name')).toBeInTheDocument();
+    expect(screen.getByText('Recipe Description')).toBeInTheDocument();
+    expect(screen.getByText('Actions')).toBeInTheDocument();
   });
 
   it('calls onDelete when delete button is clicked', () => {
     const onDelete = vi.fn();
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={onDelete} />);
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={onDelete} />);
     fireEvent.click(screen.getByLabelText('Delete Pasta'));
     expect(onDelete).toHaveBeenCalledWith(1);
   });
 
-  it('update button opens form for that recipe only', async () => {
-    const user = userEvent.setup();
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={vi.fn()} />);
-
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update' }),
-    );
-
-    expect(
-      within(screen.getByTestId('recipe-1')).getByLabelText('Update recipe title'),
-    ).toBeInTheDocument();
-    expect(
-      within(screen.getByTestId('recipe-2')).queryByLabelText('Update recipe title'),
-    ).not.toBeInTheDocument();
+  it('delete button does not trigger navigation', () => {
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText('Delete Pasta'));
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('update button label toggles to cancel', async () => {
-    const user = userEvent.setup();
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={vi.fn()} />);
-
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update' }),
-    );
-
-    expect(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Cancel' }),
-    ).toBeInTheDocument();
+  it('navigates to /demo when row is clicked', () => {
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    fireEvent.click(screen.getByTestId('recipe-1'));
+    expect(mockNavigate).toHaveBeenCalledWith('/demo');
   });
 
-  it('cancel button closes the form', async () => {
-    const user = userEvent.setup();
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={vi.fn()} />);
-
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update' }),
-    );
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Cancel' }),
-    );
-
-    expect(
-      within(screen.getByTestId('recipe-1')).queryByLabelText('Update recipe title'),
-    ).not.toBeInTheDocument();
+  it('edit button does not trigger navigation', () => {
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText('Edit Pasta'));
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('only one form open at a time', async () => {
-    const user = userEvent.setup();
-    render(<RecipeList recipes={mockRecipes} onUpdate={vi.fn()} onDelete={vi.fn()} />);
-
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update' }),
-    );
-    await user.click(
-      within(screen.getByTestId('recipe-2')).getByRole('button', { name: 'Update' }),
-    );
-
-    expect(
-      within(screen.getByTestId('recipe-1')).queryByLabelText('Update recipe title'),
-    ).not.toBeInTheDocument();
-    expect(
-      within(screen.getByTestId('recipe-2')).getByLabelText('Update recipe title'),
-    ).toBeInTheDocument();
+  it('calls onEdit with the recipe when edit button is clicked', () => {
+    const onEdit = vi.fn();
+    renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={onEdit} onDelete={vi.fn()} />);
+    fireEvent.click(screen.getByLabelText('Edit Pasta'));
+    expect(onEdit).toHaveBeenCalledWith(mockRecipes[0]);
   });
 
-  it('calls onUpdate with correct id and dto', async () => {
-    const user = userEvent.setup();
-    const onUpdate = vi.fn().mockResolvedValue(undefined);
-    render(<RecipeList recipes={mockRecipes} onUpdate={onUpdate} onDelete={vi.fn()} />);
-
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update' }),
-    );
-
-    const titleInput = within(screen.getByTestId('recipe-1')).getByLabelText('Update recipe title');
-    await user.clear(titleInput);
-    await user.type(titleInput, 'New Pasta');
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update Recipe' }),
-    );
-
-    expect(onUpdate).toHaveBeenCalledWith(1, {
-      title: 'New Pasta',
-      description: 'Simple pasta dish',
-      author: 'Alice',
+  describe('search', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
     });
-  });
 
-  it('form closes after successful update', async () => {
-    const user = userEvent.setup();
-    const onUpdate = vi.fn().mockResolvedValue(undefined);
-    render(<RecipeList recipes={mockRecipes} onUpdate={onUpdate} onDelete={vi.fn()} />);
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update' }),
-    );
-    await user.click(
-      within(screen.getByTestId('recipe-1')).getByRole('button', { name: 'Update Recipe' }),
-    );
+    it('renders a search field', () => {
+      renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+      expect(screen.getByLabelText('Search')).toBeInTheDocument();
+    });
 
-    expect(
-      within(screen.getByTestId('recipe-1')).queryByLabelText('Update recipe title'),
-    ).not.toBeInTheDocument();
+    it('filters recipes by title after debounce', () => {
+      renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+
+      fireEvent.change(screen.getByLabelText('Search'), { target: { value: 'pasta' } });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(screen.getByText('Pasta')).toBeInTheDocument();
+      expect(screen.queryByText('Salad')).not.toBeInTheDocument();
+    });
+
+    it('filters recipes by description after debounce', () => {
+      renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+
+      fireEvent.change(screen.getByLabelText('Search'), { target: { value: 'garden' } });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(screen.queryByText('Pasta')).not.toBeInTheDocument();
+      expect(screen.getByText('Salad')).toBeInTheDocument();
+    });
+
+    it('shows no matching message when search has no results', () => {
+      renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+
+      fireEvent.change(screen.getByLabelText('Search'), { target: { value: 'xyz' } });
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
+
+      expect(screen.getByText('No matching recipes')).toBeInTheDocument();
+    });
+
+    it('does not filter before debounce delay', () => {
+      renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
+
+      fireEvent.change(screen.getByLabelText('Search'), { target: { value: 'pasta' } });
+      // Don't advance timers — both should still be visible
+      expect(screen.getByText('Pasta')).toBeInTheDocument();
+      expect(screen.getByText('Salad')).toBeInTheDocument();
+    });
   });
 });

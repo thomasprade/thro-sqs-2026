@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RecipeEntity } from '../recipes/recipe.entity';
-import { CreateIngredientDto, UpdateIngredientDto } from './dto';
+import { CreateIngredientDto, UpdateIngredientDto } from './ingredient.dto';
 import { IngredientEntity } from './ingredient.entity';
 
 @Injectable()
