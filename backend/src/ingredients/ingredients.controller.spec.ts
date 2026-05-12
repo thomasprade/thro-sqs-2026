@@ -28,6 +28,8 @@ describe('IngredientsController', () => {
           useValue: {
             getIngredients: jest.fn().mockResolvedValue([mockIngredient]),
             addIngredients: jest.fn().mockResolvedValue([mockIngredient]),
+            updateIngredient: jest.fn().mockResolvedValue(mockIngredient),
+            removeIngredient: jest.fn().mockResolvedValue(undefined),
           },
         },
       ],
@@ -61,6 +63,26 @@ describe('IngredientsController', () => {
 
       expect(result.data).toHaveLength(1);
       expect(service.addIngredients).toHaveBeenCalledWith(1, payload);
+    });
+  });
+
+  describe('updateIngredient', () => {
+    it('should forward recipeId and ingredientId in the correct order', async () => {
+      const update = { name: 'Updated Milk', amount: 1, unit: 'L' };
+
+      const result = await controller.updateIngredient(7, 42, update);
+
+      expect(result.data.id).toBe(1);
+      expect(service.updateIngredient).toHaveBeenCalledWith(7, 42, update);
+    });
+  });
+
+  describe('deleteIngredient', () => {
+    it('should forward recipeId and ingredientId in the correct order', async () => {
+      const result = await controller.deleteIngredient(7, 42);
+
+      expect(result.message).toContain('deleted');
+      expect(service.removeIngredient).toHaveBeenCalledWith(7, 42);
     });
   });
 });

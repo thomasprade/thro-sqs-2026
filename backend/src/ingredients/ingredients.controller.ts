@@ -1,22 +1,34 @@
 import { ApiResponse, Ingredient } from '@app/shared';
-import { Body, Controller, Get, Param, ParseArrayPipe, ParseIntPipe, Post } from '@nestjs/common';
-import { CreateIngredientDto } from './ingredient.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseArrayPipe,
+  ParseIntPipe,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { CreateIngredientDto, UpdateIngredientDto } from './ingredient.dto';
 import { toIngredient } from './ingredients.mapper';
 import { IngredientsService } from './ingredients.service';
 
-@Controller('api/recipes/:id/ingredients')
+@Controller('api/recipes/:recipeId/ingredients')
 export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Get()
-  async getIngredients(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<Ingredient[]>> {
-    const ingredients = await this.ingredientsService.getIngredients(id);
+  async getIngredients(
+    @Param('recipeId', ParseIntPipe) recipeId: number,
+  ): Promise<ApiResponse<Ingredient[]>> {
+    const ingredients = await this.ingredientsService.getIngredients(recipeId);
     return { data: ingredients.map(toIngredient) };
   }
 
   @Post()
   async addIngredients(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('recipeId', ParseIntPipe) recipeId: number,
     @Body(
       new ParseArrayPipe({
         items: CreateIngredientDto,
@@ -25,7 +37,26 @@ export class IngredientsController {
     )
     dtos: CreateIngredientDto[],
   ): Promise<ApiResponse<Ingredient[]>> {
-    const ingredients = await this.ingredientsService.addIngredients(id, dtos);
+    const ingredients = await this.ingredientsService.addIngredients(recipeId, dtos);
     return { data: ingredients.map(toIngredient) };
+  }
+
+  @Put(':ingredientId')
+  async updateIngredient(
+    @Param('recipeId', ParseIntPipe) recipeId: number,
+    @Param('ingredientId', ParseIntPipe) ingredientId: number,
+    @Body() dto: UpdateIngredientDto,
+  ): Promise<ApiResponse<Ingredient>> {
+    const ingredient = await this.ingredientsService.updateIngredient(recipeId, ingredientId, dto);
+    return { data: toIngredient(ingredient) };
+  }
+
+  @Delete(':ingredientId')
+  async deleteIngredient(
+    @Param('recipeId', ParseIntPipe) recipeId: number,
+    @Param('ingredientId', ParseIntPipe) ingredientId: number,
+  ): Promise<{ message: string }> {
+    await this.ingredientsService.removeIngredient(recipeId, ingredientId);
+    return { message: `Ingredient #${ingredientId} deleted` };
   }
 }

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { RecipeEntity } from '../recipes/recipe.entity';
-import { CreateIngredientDto } from './ingredient.dto';
+import { CreateIngredientDto, UpdateIngredientDto } from './ingredient.dto';
 import { IngredientEntity } from './ingredient.entity';
 
 @Injectable()
@@ -20,6 +20,17 @@ export class IngredientsService {
       throw new NotFoundException(`Recipe #${recipeId} not found`);
     }
     return recipe;
+  }
+
+  private async findOne(recipeId: number, ingredientId: number): Promise<IngredientEntity> {
+    const ingredient = await this.ingredientRepo.findOneBy({
+      id: ingredientId,
+      recipeId: recipeId,
+    });
+    if (!ingredient) {
+      throw new NotFoundException(`Ingredient #${ingredientId} not found for recipe #${recipeId}`);
+    }
+    return ingredient;
   }
 
   async getIngredients(recipeId: number): Promise<IngredientEntity[]> {
@@ -47,5 +58,20 @@ export class IngredientsService {
       where: { recipeId },
       order: { id: 'ASC' },
     });
+  }
+
+  async updateIngredient(
+    recipeId: number,
+    ingredientId: number,
+    dto: UpdateIngredientDto,
+  ): Promise<IngredientEntity> {
+    const ingredient = await this.findOne(recipeId, ingredientId);
+    Object.assign(ingredient, dto);
+    return this.ingredientRepo.save(ingredient);
+  }
+
+  async removeIngredient(recipeId: number, ingredientId: number): Promise<void> {
+    const ingredient = await this.findOne(recipeId, ingredientId);
+    await this.ingredientRepo.remove(ingredient);
   }
 }
