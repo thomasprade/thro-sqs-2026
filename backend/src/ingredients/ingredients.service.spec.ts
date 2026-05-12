@@ -32,16 +32,6 @@ describe('IngredientsService', () => {
     updatedAt: new Date('2026-01-01'),
   };
 
-  const mockCrossRecipe: RecipeEntity = {
-    id: 2,
-    title: 'Test cross access recipe',
-    description: 'Boil some meat',
-    author: 'John',
-    createdAt: new Date('2026-01-01'),
-    updatedAt: new Date('2026-01-01'),
-    ingredients: [],
-  };
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
