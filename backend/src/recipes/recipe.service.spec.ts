@@ -92,7 +92,7 @@ describe('RecipeService', () => {
   });
 
   describe('remove', () => {
-    it('should remove the todo', async () => {
+    it('should remove the recipe', async () => {
       await service.remove(1);
       expect(recipeRepo.remove).toHaveBeenCalledWith(mockRecipe);
     });

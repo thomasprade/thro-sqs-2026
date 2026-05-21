@@ -7,7 +7,7 @@ import { IngredientsModule } from '../src/ingredients/ingredients.module';
 import { RecipeEntity } from '../src/recipes/recipe.entity';
 import { RecipeModule } from '../src/recipes/recipe.module';
 
-describe('Todo (e2e)', () => {
+describe('Recipe (e2e)', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -35,7 +35,7 @@ describe('Todo (e2e)', () => {
 
   let createdId: number;
 
-  it('POST /api/recipes — should create a todo', async () => {
+  it('POST /api/recipes — should create a recipe', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/recipes')
       .send({
@@ -52,7 +52,7 @@ describe('Todo (e2e)', () => {
     createdId = res.body.data.id;
   });
 
-  it('GET /api/recipes — should return all todos', async () => {
+  it('GET /api/recipes — should return all recipes', async () => {
     const res = await request(app.getHttpServer()).get('/api/recipes').expect(200);
 
     expect(res.body.data).toHaveLength(1);
