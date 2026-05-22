@@ -22,9 +22,9 @@ Our top three quality goals:
 _TODO:_ decide on quality goals
 | Priority | Quality Goal | Scenario |
 | --- | --- | --- |
-| 1 | ||
-| 2 | ||
-| 3 | ||
+| 1 | TBD | TBD |
+| 2 | TBD | TBD |
+| 3 | TBD | TBD |
 
 Reliability:
 
