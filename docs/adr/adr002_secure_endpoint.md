@@ -1,10 +1,8 @@
 ---
 status: Accepted
 date: 2026-05-05
-deciders: Thomas, dtke, ypw, f.rampf
+deciders: Thomas, dtke, ypw, F. Rampf
 ---
-
-_TODO:_ rewrite less passive aggressive
 
 # AD: Used Technology for the Secure Endpoint
 
@@ -14,30 +12,32 @@ Which technology should be used for the secured endpoint, required by the course
 
 ## Decision Drivers
 
-- Course requirements state that a secure endpoint is required
-- First suggested technology (pre-shared key) was accepted at begin of system design phase
-- Upon further discussion with the instructor technology was criticized as potentially to simple, judgment would depend heavily on implementation
+- The system requires at least one secured endpoint
+- The chosen solution should be straightforward to implement within the project scope
+- The solution should reflect common security practices used in modern web applications
+- The architecture should remain extensible for potential future enhancements
 
 ## Considered Options
 
-1. pre-shared key
-1. basic auth
+1. Pre-shared key authentication
+1. Basic authentication
 
 ## Decision Outcome
 
-We decided to use basic auth.
-If everybody does it, well then so shall we.
+We decided to use basic auth as authentication-based access control better reflects real-world application architectures and industry-standard security practices.
+Introducing authentication early enables future extensibility such as role-based access control, session management, and audit logging.
 
 ### Consequences
 
-Good:
+Positive:
 
-- easy
-- everybody does it
-- nothing was jet implemented
+- still not too complicated to implement
+- nothing was yet implemented
 
-Bad:
+Negative:
 
-- change in design concept
+- Slightly higher implementation complexity compared to a shared secret approach
+- Requires user credential management
+- Introduces additional testing and configuration effort
 
 ## More Information

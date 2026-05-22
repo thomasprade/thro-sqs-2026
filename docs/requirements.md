@@ -1,6 +1,6 @@
-= Requirements
+# Requirements
 
-== Must Haves: Course Requirements
+## Must Haves: Course Requirements
 
 - [x] public repo
 - [ ] 15 min Presentation -> issue #30
@@ -16,7 +16,7 @@
   - [ ] secure endpoint -> issue #31
   - [ ] backend
     - [ ] API
-      - [ ] fail-save architecture pattern ("Ausfallsichere Architekturpatterns zum Anbinden externe[r] Services") -> Issue 32
+      - [ ] fail-safe architecture pattern ("Ausfallsichere Architekturpatterns zum Anbinden externe[r] Services") -> Issue 32
   - [x] persistence
   - [ ] tests
     - [ ] unit tests -> Issue #33
@@ -34,10 +34,10 @@
     - [ ] C4 Model (for presentation) -> Issue #30 (could be made into sub-issue)
     - [ ] project decisions in ADR -> Issue #40
     - [ ] clean structured documentation
-    - [ ] documentation hosted on readthedocks -> Issue #41
+    - [ ] documentation hosted on readthedocs -> Issue #41
   - [ ] setup with max 2 commands -> Issue #42
 
-== MVP
+## MVP
 
 - [ ] backend
   - [x] recipes
@@ -57,4 +57,4 @@
   - [ ] recipe manipulation -> #12
   - [ ] better ts layout (material ui) -> #23
 
-== Nice to have
+## Nice to have

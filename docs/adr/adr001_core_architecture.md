@@ -29,13 +29,13 @@ Therefore the overhead of using hexagonal architecture is not justified.
 
 ### Consequences
 
-Good:
+Positive:
 
 - simple and working architecture
 - easy to develop
 - easy to understand in small projects
 
-Bad:
+Negative:
 
 - hard to exchange components
 - hard to maintain should the project continue to grow
