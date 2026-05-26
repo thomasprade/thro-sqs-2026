@@ -89,6 +89,26 @@ describe('RecipePage', () => {
     expect(screen.getByTestId('loading')).toBeInTheDocument();
   });
 
+  it('shows error for invalid (non-numeric) recipe ID', async () => {
+    vi.mocked(fetchRecipe).mockClear();
+    vi.mocked(fetchIngredients).mockClear();
+
+    render(
+      <MemoryRouter initialEntries={['/recipe/abc']}>
+        <Routes>
+          <Route path="/recipe/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('error')).toBeInTheDocument();
+    });
+    expect(screen.getByText('Invalid recipe ID')).toBeInTheDocument();
+    expect(fetchRecipe).not.toHaveBeenCalled();
+    expect(fetchIngredients).not.toHaveBeenCalled();
+  });
+
   it('renders recipe title and description', async () => {
     renderRecipePage();
     await waitFor(() => {

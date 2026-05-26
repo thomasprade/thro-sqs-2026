@@ -31,6 +31,12 @@ export default function RecipePage() {
   useEffect(() => {
     if (!id) return;
 
+    if (!Number.isFinite(recipeId)) {
+      setError('Invalid recipe ID');
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -95,6 +101,9 @@ export default function RecipePage() {
 
       <Typography variant="h4" component="h1" gutterBottom>
         {recipe.title}
+      </Typography>
+      <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+        By {recipe.author}
       </Typography>
       <Typography variant="body1" gutterBottom>
         {recipe.description}

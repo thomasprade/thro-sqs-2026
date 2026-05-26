@@ -74,7 +74,7 @@ export default function IngredientFormDialog({
     setRows((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const isValid = rows.every((row) => row.name.trim() && row.amount.trim() && row.unit.trim());
+  const isValid = rows.every((row) => row.name.trim() && Number(row.amount) > 0 && row.unit.trim());
 
   const handleSave = async () => {
     if (!isValid) return;

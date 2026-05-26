@@ -32,8 +32,12 @@ export default function IngredientToolbar({
           type="number"
           value={portions}
           onChange={(e) => {
-            const val = Math.max(0.5, Number(e.target.value));
-            onPortionsChange(val);
+            const raw = e.target.value;
+            if (!raw) return;
+            const parsed = Number(raw);
+            if (Number.isFinite(parsed)) {
+              onPortionsChange(Math.max(0.5, parsed));
+            }
           }}
           slotProps={{ htmlInput: { step: 0.5, min: 0.5 } }}
           size="small"

@@ -20,8 +20,6 @@ function createRecipe(id: number, dto: CreateRecipeDto): Recipe {
   };
 }
 
-const defaultIngredients: Record<number, Ingredient[]> = {};
-
 function createIngredientsForRecipe(recipeId: number): Ingredient[] {
   const timestamp = new Date().toISOString();
   return [
@@ -59,6 +57,7 @@ export async function installRecipeApiMock(page: Page): Promise<void> {
   const recipes: Recipe[] = [];
   let nextId = 1;
   let nextIngredientId = 1000;
+  const ingredients: Record<number, Ingredient[]> = {};
 
   await page.route('**/api/recipes/**', async (route) => {
     const request = route.request();
@@ -72,38 +71,38 @@ export async function installRecipeApiMock(page: Page): Promise<void> {
     if (request.method() === 'PUT' && singleIngredientMatch) {
       const recipeId = Number(singleIngredientMatch[1]);
       const ingredientId = Number(singleIngredientMatch[2]);
-      if (!defaultIngredients[recipeId]) {
+      if (!ingredients[recipeId]) {
         await route.fulfill({ status: 404, json: { message: 'Recipe not found' } });
         return;
       }
-      const index = defaultIngredients[recipeId].findIndex((i) => i.id === ingredientId);
+      const index = ingredients[recipeId].findIndex((i) => i.id === ingredientId);
       if (index === -1) {
         await route.fulfill({ status: 404, json: { message: 'Ingredient not found' } });
         return;
       }
       const dto = request.postDataJSON() as UpdateIngredientDto;
-      defaultIngredients[recipeId][index] = {
-        ...defaultIngredients[recipeId][index],
+      ingredients[recipeId][index] = {
+        ...ingredients[recipeId][index],
         ...dto,
         updatedAt: new Date().toISOString(),
       };
-      await route.fulfill({ json: { data: defaultIngredients[recipeId][index] } });
+      await route.fulfill({ json: { data: ingredients[recipeId][index] } });
       return;
     }
 
     if (request.method() === 'DELETE' && singleIngredientMatch) {
       const recipeId = Number(singleIngredientMatch[1]);
       const ingredientId = Number(singleIngredientMatch[2]);
-      if (!defaultIngredients[recipeId]) {
+      if (!ingredients[recipeId]) {
         await route.fulfill({ status: 404, json: { message: 'Recipe not found' } });
         return;
       }
-      const index = defaultIngredients[recipeId].findIndex((i) => i.id === ingredientId);
+      const index = ingredients[recipeId].findIndex((i) => i.id === ingredientId);
       if (index === -1) {
         await route.fulfill({ status: 404, json: { message: 'Ingredient not found' } });
         return;
       }
-      defaultIngredients[recipeId].splice(index, 1);
+      ingredients[recipeId].splice(index, 1);
       await route.fulfill({ json: { message: 'Ingredient deleted' } });
       return;
     }
@@ -116,17 +115,17 @@ export async function installRecipeApiMock(page: Page): Promise<void> {
         await route.fulfill({ status: 404, json: { message: 'Recipe not found' } });
         return;
       }
-      if (!defaultIngredients[recipeId]) {
-        defaultIngredients[recipeId] = createIngredientsForRecipe(recipeId);
+      if (!ingredients[recipeId]) {
+        ingredients[recipeId] = createIngredientsForRecipe(recipeId);
       }
-      await route.fulfill({ json: { data: defaultIngredients[recipeId] } });
+      await route.fulfill({ json: { data: ingredients[recipeId] } });
       return;
     }
 
     if (request.method() === 'POST' && ingredientsCollectionMatch) {
       const recipeId = Number(ingredientsCollectionMatch[1]);
-      if (!defaultIngredients[recipeId]) {
-        defaultIngredients[recipeId] = createIngredientsForRecipe(recipeId);
+      if (!ingredients[recipeId]) {
+        ingredients[recipeId] = createIngredientsForRecipe(recipeId);
       }
       const dtos = request.postDataJSON() as CreateIngredientDto[];
       const timestamp = new Date().toISOString();
@@ -140,9 +139,9 @@ export async function installRecipeApiMock(page: Page): Promise<void> {
           createdAt: timestamp,
           updatedAt: timestamp,
         };
-        defaultIngredients[recipeId].push(newIngredient);
+        ingredients[recipeId].push(newIngredient);
       }
-      await route.fulfill({ json: { data: defaultIngredients[recipeId] } });
+      await route.fulfill({ json: { data: ingredients[recipeId] } });
       return;
     }
 
