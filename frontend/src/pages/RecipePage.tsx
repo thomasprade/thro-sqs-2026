@@ -1,21 +1,6 @@
 import type { CreateIngredientDto, Ingredient, Recipe, UpdateIngredientDto } from '@app/shared';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import {
-  Box,
-  Button,
-  Container,
-  IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Button, Container, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -26,6 +11,8 @@ import {
   updateIngredient,
 } from '../api';
 import IngredientFormDialog from '../components/IngredientFormDialog';
+import IngredientList from '../components/IngredientList';
+import IngredientToolbar from '../components/IngredientToolbar';
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>();
@@ -113,115 +100,25 @@ export default function RecipePage() {
         {recipe.description}
       </Typography>
 
-      {ingredients.length === 0 ? (
-        <>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-            <Button
-              variant={editing ? 'contained' : 'outlined'}
-              onClick={() => setEditing((prev) => !prev)}
-              data-testid="edit-ingredients-toggle"
-            >
-              {editing ? 'Done' : 'Edit Ingredients'}
-            </Button>
-            {editing && (
-              <Button
-                variant="outlined"
-                onClick={() => setAddDialogOpen(true)}
-                sx={{ ml: 1 }}
-                data-testid="add-ingredients-button"
-              >
-                Add Ingredients
-              </Button>
-            )}
-          </Box>
-          <Typography data-testid="no-ingredients">No ingredients yet</Typography>
-        </>
-      ) : (
-        <>
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', my: 2 }}
-          >
-            {!editing ? (
-              <TextField
-                label="Portions"
-                type="number"
-                value={portions}
-                onChange={(e) => {
-                  const val = Math.max(0.5, Number(e.target.value));
-                  setPortions(val);
-                }}
-                slotProps={{ htmlInput: { step: 0.5, min: 0.5 } }}
-                size="small"
-                data-testid="portions-input"
-              />
-            ) : (
-              <Box />
-            )}
-            <Box>
-              <Button
-                variant={editing ? 'contained' : 'outlined'}
-                onClick={() => setEditing((prev) => !prev)}
-                data-testid="edit-ingredients-toggle"
-              >
-                {editing ? 'Done' : 'Edit Ingredients'}
-              </Button>
-              {editing && (
-                <Button
-                  variant="outlined"
-                  onClick={() => setAddDialogOpen(true)}
-                  sx={{ ml: 1 }}
-                  data-testid="add-ingredients-button"
-                >
-                  Add Ingredients
-                </Button>
-              )}
-            </Box>
-          </Box>
+      <IngredientToolbar
+        editing={editing}
+        portions={portions}
+        hasIngredients={ingredients.length > 0}
+        onPortionsChange={setPortions}
+        onToggleEdit={() => setEditing((prev) => !prev)}
+        onAddClick={() => setAddDialogOpen(true)}
+      />
 
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Ingredient</TableCell>
-                  <TableCell align="right">Amount</TableCell>
-                  <TableCell>Unit</TableCell>
-                  {editing && <TableCell align="right">Actions</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {ingredients.map((ingredient) => (
-                  <TableRow key={ingredient.id} data-testid={`ingredient-${ingredient.id}`}>
-                    <TableCell>{ingredient.name}</TableCell>
-                    <TableCell align="right">
-                      {editing
-                        ? ingredient.amount
-                        : Math.round(ingredient.amount * portions * 100) / 100}
-                    </TableCell>
-                    <TableCell>{ingredient.unit}</TableCell>
-                    {editing && (
-                      <TableCell align="right">
-                        <IconButton
-                          size="small"
-                          aria-label={`Edit ${ingredient.name}`}
-                          onClick={() => setEditingIngredient(ingredient)}
-                        >
-                          <EditIcon fontSize="small" />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          aria-label={`Delete ${ingredient.name}`}
-                          onClick={() => handleDeleteIngredient(ingredient.id)}
-                        >
-                          <DeleteIcon fontSize="small" />
-                        </IconButton>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
+      {ingredients.length === 0 ? (
+        <Typography data-testid="no-ingredients">No ingredients yet</Typography>
+      ) : (
+        <IngredientList
+          ingredients={ingredients}
+          editing={editing}
+          portions={portions}
+          onEdit={setEditingIngredient}
+          onDelete={handleDeleteIngredient}
+        />
       )}
 
       <IngredientFormDialog
