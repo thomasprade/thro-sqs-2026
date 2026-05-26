@@ -14,12 +14,19 @@ import {
 import { useEffect, useState } from 'react';
 
 interface IngredientRow {
+  key: string;
   name: string;
   amount: string;
   unit: string;
 }
 
-const emptyRow = (): IngredientRow => ({ name: '', amount: '', unit: '' });
+let rowCounter = 0;
+const emptyRow = (): IngredientRow => ({
+  key: `row-${rowCounter++}`,
+  name: '',
+  amount: '',
+  unit: '',
+});
 
 type IngredientFormDialogProps = {
   open: boolean;
@@ -43,7 +50,12 @@ export default function IngredientFormDialog({
     if (open) {
       if (ingredient) {
         setRows([
-          { name: ingredient.name, amount: String(ingredient.amount), unit: ingredient.unit },
+          {
+            key: `edit-${ingredient.id}`,
+            name: ingredient.name,
+            amount: String(ingredient.amount),
+            unit: ingredient.unit,
+          },
         ]);
       } else {
         setRows([emptyRow()]);
@@ -70,7 +82,7 @@ export default function IngredientFormDialog({
     try {
       if (isEdit) {
         const row = rows[0];
-        await (onSave as (dto: UpdateIngredientDto) => Promise<void>)({
+        await onSave({
           name: row.name.trim(),
           amount: Number(row.amount),
           unit: row.unit.trim(),
@@ -81,7 +93,7 @@ export default function IngredientFormDialog({
           amount: Number(row.amount),
           unit: row.unit.trim(),
         }));
-        await (onSave as (dtos: CreateIngredientDto[]) => Promise<void>)(dtos);
+        await onSave(dtos);
       }
     } finally {
       setSubmitting(false);
@@ -95,7 +107,7 @@ export default function IngredientFormDialog({
         sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}
       >
         {rows.map((row, index) => (
-          <Stack key={index} direction="row" spacing={1} alignItems="center">
+          <Stack key={row.key} direction="row" spacing={1} sx={{ alignItems: 'center' }}>
             <TextField
               label="Name"
               value={row.name}
