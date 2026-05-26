@@ -79,7 +79,7 @@ export default function RecipeList({ recipes, onEdit, onDelete }: Readonly<Recip
                   key={recipe.id}
                   data-testid={`recipe-${recipe.id}`}
                   hover
-                  onClick={() => navigate('/demo')}
+                  onClick={() => navigate('/recipe')}
                   sx={{ cursor: 'pointer' }}
                 >
                   <TableCell>{recipe.title}</TableCell>

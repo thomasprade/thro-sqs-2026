@@ -1,9 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import Home from './pages/Home';
 import './index.css';
-import DemoPage from './pages/DemoPage';
+import Home from './pages/Home';
+import RecipePage from './pages/RecipePage';
 
 const router = createBrowserRouter([
   {
@@ -11,8 +11,8 @@ const router = createBrowserRouter([
     element: <Home />,
   },
   {
-    path: '/demo',
-    element: <DemoPage />,
+    path: '/recipe',
+    element: <RecipePage />,
   },
 ]);
 
