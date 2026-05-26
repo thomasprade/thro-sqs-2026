@@ -1,5 +1,5 @@
 import { expect, test } from './coverage-fixture';
-import { installRecipeApiMock } from './mock-recipes';
+import { installRecipeApiMock } from './mocks';
 
 test.describe('Recipe App UI', () => {
   test.beforeEach(async ({ page }) => {
