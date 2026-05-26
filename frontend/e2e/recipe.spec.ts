@@ -109,3 +109,60 @@ test.describe('Recipe App UI', () => {
     await expect(dialog.getByLabel('Title')).toHaveValue('Something');
   });
 });
+
+test.describe('Recipe Detail Page', () => {
+  test.beforeEach(async ({ page }) => {
+    await installRecipeApiMock(page);
+    await page.goto('/');
+
+    // Create a recipe to navigate to
+    await page.getByRole('button', { name: 'New Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Test Recipe');
+    await dialog.getByLabel('Description').fill('A delicious test recipe');
+    await dialog.getByLabel('Author').fill('Test Chef');
+    await dialog.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByText('Test Recipe', { exact: true })).toBeVisible();
+  });
+
+  test('should navigate to recipe detail page when clicking a recipe row', async ({ page }) => {
+    await page.getByTestId('recipe-1').click();
+    await expect(page.getByRole('heading', { name: 'Test Recipe' })).toBeVisible();
+    await expect(page.getByText('A delicious test recipe')).toBeVisible();
+  });
+
+  test('should display ingredients with amounts and units', async ({ page }) => {
+    await page.getByTestId('recipe-1').click();
+    await expect(page.getByText('Flour')).toBeVisible();
+    await expect(page.getByText('Eggs')).toBeVisible();
+    await expect(page.getByText('Milk')).toBeVisible();
+    await expect(
+      page.getByTestId('ingredient-101').getByRole('cell', { name: '200' }),
+    ).toBeVisible();
+    await expect(page.getByTestId('ingredient-101').getByRole('cell', { name: 'g' })).toBeVisible();
+  });
+
+  test('should update ingredient amounts when changing portion size', async ({ page }) => {
+    await page.getByTestId('recipe-1').click();
+    await expect(page.getByText('Flour')).toBeVisible();
+
+    const portionsInput = page.getByTestId('portions-input').locator('input');
+    await portionsInput.fill('2');
+
+    await expect(
+      page.getByTestId('ingredient-101').getByRole('cell', { name: '400' }),
+    ).toBeVisible();
+    await expect(page.getByTestId('ingredient-102').getByRole('cell', { name: '4' })).toBeVisible();
+    await expect(
+      page.getByTestId('ingredient-103').getByRole('cell', { name: '300' }),
+    ).toBeVisible();
+  });
+
+  test('should navigate back to home when clicking back button', async ({ page }) => {
+    await page.getByTestId('recipe-1').click();
+    await expect(page.getByRole('heading', { name: 'Test Recipe' })).toBeVisible();
+
+    await page.getByTestId('back-button').click();
+    await expect(page.getByRole('heading', { name: 'Recipes' })).toBeVisible();
+  });
+});
