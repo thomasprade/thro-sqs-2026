@@ -1,8 +1,10 @@
 import type {
   ApiResponse,
+  CreateIngredientDto,
   CreateRecipeDto,
   Ingredient,
   Recipe,
+  UpdateIngredientDto,
   UpdateRecipeDto,
 } from '@app/shared';
 
@@ -55,4 +57,40 @@ export async function fetchIngredients(recipeId: number): Promise<Ingredient[]> 
   if (!res.ok) throw new Error('Failed to fetch ingredients');
   const body = (await res.json()) as ApiResponse<Ingredient[]>;
   return body.data;
+}
+
+export async function addIngredients(
+  recipeId: number,
+  dtos: CreateIngredientDto[],
+): Promise<Ingredient[]> {
+  const res = await fetch(`${API_BASE}/${recipeId}/ingredients`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dtos),
+  });
+  if (!res.ok) throw new Error('Failed to add ingredients');
+  const body = (await res.json()) as ApiResponse<Ingredient[]>;
+  return body.data;
+}
+
+export async function updateIngredient(
+  recipeId: number,
+  ingredientId: number,
+  dto: UpdateIngredientDto,
+): Promise<Ingredient> {
+  const res = await fetch(`${API_BASE}/${recipeId}/ingredients/${ingredientId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dto),
+  });
+  if (!res.ok) throw new Error('Failed to update ingredient');
+  const body = (await res.json()) as ApiResponse<Ingredient>;
+  return body.data;
+}
+
+export async function deleteIngredient(recipeId: number, ingredientId: number): Promise<void> {
+  const res = await fetch(`${API_BASE}/${recipeId}/ingredients/${ingredientId}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) throw new Error('Failed to delete ingredient');
 }

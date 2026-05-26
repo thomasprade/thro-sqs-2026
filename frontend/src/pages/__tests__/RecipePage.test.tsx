@@ -13,9 +13,18 @@ vi.mock('react-router', async () => {
 vi.mock('../../api', () => ({
   fetchRecipe: vi.fn(),
   fetchIngredients: vi.fn(),
+  addIngredients: vi.fn(),
+  updateIngredient: vi.fn(),
+  deleteIngredient: vi.fn(),
 }));
 
-import { fetchIngredients, fetchRecipe } from '../../api';
+import {
+  addIngredients,
+  deleteIngredient,
+  fetchIngredients,
+  fetchRecipe,
+  updateIngredient,
+} from '../../api';
 
 const mockRecipe: Recipe = {
   id: 1,
@@ -157,5 +166,188 @@ describe('RecipePage', () => {
 
     fireEvent.click(screen.getByTestId('back-button'));
     expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+
+  describe('edit mode', () => {
+    it('shows "Edit Ingredients" button that toggles to "Done"', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByTestId('edit-ingredients-toggle')).toBeInTheDocument();
+      });
+      expect(screen.getByTestId('edit-ingredients-toggle')).toHaveTextContent('Edit Ingredients');
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByTestId('edit-ingredients-toggle')).toHaveTextContent('Done');
+    });
+
+    it('shows edit and delete buttons in edit mode', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Spaghetti')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByLabelText('Edit Spaghetti')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByLabelText('Edit Spaghetti')).toBeInTheDocument();
+      expect(screen.getByLabelText('Delete Spaghetti')).toBeInTheDocument();
+    });
+
+    it('hides portions field in edit mode', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByTestId('portions-input')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.queryByTestId('portions-input')).not.toBeInTheDocument();
+    });
+
+    it('shows raw amounts in edit mode (not multiplied)', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByTestId('portions-input')).toBeInTheDocument();
+      });
+
+      const input = screen.getByTestId('portions-input').querySelector('input')!;
+      await act(async () => {
+        fireEvent.change(input, { target: { value: '2' } });
+      });
+      expect(screen.getByText('400')).toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByText('200')).toBeInTheDocument();
+      expect(screen.queryByText('400')).not.toBeInTheDocument();
+    });
+
+    it('deletes an ingredient when delete button is clicked', async () => {
+      vi.mocked(deleteIngredient).mockResolvedValue(undefined);
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Spaghetti')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      await act(async () => {
+        fireEvent.click(screen.getByLabelText('Delete Spaghetti'));
+      });
+
+      expect(deleteIngredient).toHaveBeenCalledWith(1, 1);
+      expect(screen.queryByText('Spaghetti')).not.toBeInTheDocument();
+    });
+
+    it('opens edit dialog when edit button is clicked', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Spaghetti')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      fireEvent.click(screen.getByLabelText('Edit Spaghetti'));
+
+      expect(screen.getByRole('heading', { name: 'Edit Ingredient' })).toBeInTheDocument();
+      expect(screen.getByTestId('ingredient-name-0').querySelector('input')).toHaveValue(
+        'Spaghetti',
+      );
+    });
+
+    it('updates an ingredient via the edit dialog', async () => {
+      const updatedIngredient = { ...mockIngredients[0], name: 'Penne', amount: 300 };
+      vi.mocked(updateIngredient).mockResolvedValue(updatedIngredient);
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Spaghetti')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      fireEvent.click(screen.getByLabelText('Edit Spaghetti'));
+
+      fireEvent.change(screen.getByTestId('ingredient-name-0').querySelector('input')!, {
+        target: { value: 'Penne' },
+      });
+      fireEvent.change(screen.getByTestId('ingredient-amount-0').querySelector('input')!, {
+        target: { value: '300' },
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+      });
+
+      expect(updateIngredient).toHaveBeenCalledWith(1, 1, {
+        name: 'Penne',
+        amount: 300,
+        unit: 'g',
+      });
+      await waitFor(() => {
+        expect(screen.getByText('Penne')).toBeInTheDocument();
+      });
+    });
+
+    it('shows "Add Ingredients" button in edit mode', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Spaghetti')).toBeInTheDocument();
+      });
+
+      expect(screen.queryByTestId('add-ingredients-button')).not.toBeInTheDocument();
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByTestId('add-ingredients-button')).toBeInTheDocument();
+    });
+
+    it('adds ingredients via the add dialog', async () => {
+      const newList = [
+        ...mockIngredients,
+        {
+          id: 4,
+          recipeId: 1,
+          name: 'Butter',
+          amount: 50,
+          unit: 'g',
+          createdAt: '2025-01-01T00:00:00.000Z',
+          updatedAt: '2025-01-01T00:00:00.000Z',
+        },
+      ];
+      vi.mocked(addIngredients).mockResolvedValue(newList);
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Spaghetti')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      fireEvent.click(screen.getByTestId('add-ingredients-button'));
+
+      expect(screen.getByRole('heading', { name: 'Add Ingredients' })).toBeInTheDocument();
+
+      fireEvent.change(screen.getByTestId('ingredient-name-0').querySelector('input')!, {
+        target: { value: 'Butter' },
+      });
+      fireEvent.change(screen.getByTestId('ingredient-amount-0').querySelector('input')!, {
+        target: { value: '50' },
+      });
+      fireEvent.change(screen.getByTestId('ingredient-unit-0').querySelector('input')!, {
+        target: { value: 'g' },
+      });
+
+      await act(async () => {
+        fireEvent.click(screen.getByRole('button', { name: 'Save' }));
+      });
+
+      expect(addIngredients).toHaveBeenCalledWith(1, [{ name: 'Butter', amount: 50, unit: 'g' }]);
+      await waitFor(() => {
+        expect(screen.getByText('Butter')).toBeInTheDocument();
+      });
+    });
+
+    it('"Done" button exits edit mode and restores portions field', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByTestId('portions-input')).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.queryByTestId('portions-input')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByTestId('portions-input')).toBeInTheDocument();
+    });
   });
 });
