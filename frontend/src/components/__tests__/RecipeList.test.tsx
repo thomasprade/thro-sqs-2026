@@ -71,10 +71,10 @@ describe('RecipeList', () => {
     expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('navigates to /demo when row is clicked', () => {
+  it('navigates to /recipe/:id when row is clicked', () => {
     renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
     fireEvent.click(screen.getByTestId('recipe-1'));
-    expect(mockNavigate).toHaveBeenCalledWith('/demo');
+    expect(mockNavigate).toHaveBeenCalledWith('/recipe/1');
   });
 
   it('edit button does not trigger navigation', () => {
