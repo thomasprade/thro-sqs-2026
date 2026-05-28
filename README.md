@@ -2,6 +2,21 @@
 
 A full-stack TypeScript monorepo demonstrating software quality assurance practices. Built with **React**, **NestJS**, and **SQLite**, featuring comprehensive testing at every level — unit tests, UI tests, end-to-end tests, and full-stack integration tests.
 
+[![Read the Docs](https://app.readthedocs.org/projects/sqs-recipe-app/badge/?version=latest&style=for-the-badge)](https://sqs-recipe-app.readthedocs.io/en/latest/)
+
+![CI](https://github.com/thomasprade/thro-sqs-2026/actions/workflows/ci.yml/badge.svg)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=bugs)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=coverage)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
+
 ## Repository Structure
 
 ```
