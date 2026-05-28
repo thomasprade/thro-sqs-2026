@@ -1,0 +1,80 @@
+site_name: Recipe App
+
+# Repository
+repo_name: thomasprade/thro-sqs-2026
+repo_url: https://github.com/thomasprade/thro-sqs-2026
+
+# Copyright
+copyright: Copyright &copy; 2026 SQS Team Prade
+
+theme:
+  name: material
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.code.select
+    - content.footnote.tooltips
+    - content.tabs.link
+    - content.tooltips
+    - header.autohide
+    - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.instant.progress
+    - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+    - toc.integrate
+  palette:
+    - media: '(prefers-color-scheme)'
+      toggle:
+        icon: material/brightness-7
+        name: Switch to light mode
+    - media: '(prefers-color-scheme: light)'
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-2
+        name: Switch to dark mode
+    - media: '(prefers-color-scheme: dark)'
+      scheme: slate
+      primary: black
+      accent: indigo
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to system preference
+  font:
+    text: Roboto
+    code: Roboto Mono
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+  - plantuml:
+      puml_url: https://www.plantuml.com/plantuml/
+      num_retries: 20
+markdown_extensions:
+  - admonition
+  - codehilite
+  - toc:
+      permalink: true
+  - md_in_html
+
+# Page tree
+nav:
+  - Home:
+      - index.md
