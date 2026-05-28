@@ -5,19 +5,19 @@ import { CreateRecipeDto, UpdateRecipeDto } from './recipe.dto';
 import { RecipeService } from './recipe.service';
 import { toRecipe } from './recipes.mapper';
 
-// TODO: Remove @Public() when frontend implements authentication
-@Public()
 @Controller('api/recipes')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}
 
   @Get()
+  @Public()
   async findAll(): Promise<ApiResponse<Recipe[]>> {
     const recipes = await this.recipeService.findAll();
     return { data: recipes.map(toRecipe) };
   }
 
   @Get(':id')
+  @Public()
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<Recipe>> {
     const recipe = await this.recipeService.findOne(id);
     return { data: toRecipe(recipe) };

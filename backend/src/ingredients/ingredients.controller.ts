@@ -15,13 +15,12 @@ import { CreateIngredientDto, UpdateIngredientDto } from './ingredient.dto';
 import { toIngredient } from './ingredients.mapper';
 import { IngredientsService } from './ingredients.service';
 
-// TODO: Remove @Public() when frontend implements authentication
-@Public()
 @Controller('api/recipes/:recipeId/ingredients')
 export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Get()
+  @Public()
   async getIngredients(
     @Param('recipeId', ParseIntPipe) recipeId: number,
   ): Promise<ApiResponse<Ingredient[]>> {
