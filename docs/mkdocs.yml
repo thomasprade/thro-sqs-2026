@@ -60,6 +60,8 @@ theme:
     text: Roboto
     code: Roboto Mono
 
+docs_dir: .
+
 plugins:
   - search
   - mkdocstrings:
@@ -78,3 +80,21 @@ markdown_extensions:
 nav:
   - Home:
       - index.md
+      - c4:
+          - c4/c4.md
+      - arc42:
+          - arc42/01_introduction_and_goals.md
+          - arc42/02_architecture_constraints.md
+          - arc42/03_context_and_scope.md
+          - arc42/04_solution_strategy.md
+          - arc42/05_building_block_view.md
+          - arc42/06_runtime_view.md
+          - arc42/07_deployment_view.md
+          - arc42/08_crosscutting_concepts.md
+          - arc42/09_architecture_decisions.md
+          - arc42/10_quality.md
+          - arc42/11_risks_and_technical_dept.md
+          - arc42/12_glossary.md
+      - adr:
+          - adr/adr001_core_architecture.md
+          - adr/adr002_secure_endpoint.md

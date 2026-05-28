@@ -15,16 +15,24 @@ A short description of the core functional requirements for our system. For a de
 
 _TODO:_ Some sort of use case diagram
 
+```puml
+@startuml
+left to right direction
+actor "Home-Cheff" as user
+@enduml
+```
+
 ## Quality Goals
 
 Our top three quality goals:
 
 _TODO:_ decide on quality goals
+
 | Priority | Quality Goal | Scenario |
-| --- | --- | --- |
-| 1 | TBD | TBD |
-| 2 | TBD | TBD |
-| 3 | TBD | TBD |
+| -------- | ------------ | -------- |
+| 1        | TBD          | TBD      |
+| 2        | TBD          | TBD      |
+| 3        | TBD          | TBD      |
 
 Reliability:
 
