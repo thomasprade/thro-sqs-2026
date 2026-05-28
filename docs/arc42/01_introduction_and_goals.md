@@ -15,6 +15,41 @@ A short description of the core functional requirements for our system. For a de
 
 _TODO:_ Some sort of use case diagram
 
+```puml
+@startuml
+left to right direction
+actor "German car driver" as user
+rectangle Tanker24 {
+  usecase "UC1 - Search gas price in area" as UC1 #palegreen
+  usecase "UC2 - Get detail information for gas station" as UC2 #palegreen
+  usecase "UC3 - Track filling" as UC3
+  usecase "UC4 - Export user data" as UC4
+  usecase "UC5 - Authenticate" as UC5
+  usecase "UC4.1 - Export as JSON" as UC4.1
+  usecase "UC4.2 - Export as csv" as UC4.2
+  usecase "UC6 - Add car to user account" as UC6
+  usecase "UC7 - List gas stations by distance" as UC7 #palegreen
+}
+user --> UC1
+user --> UC2
+user --> UC3
+user --> UC4.1
+user --> UC4.2
+user --> UC6
+user --> UC7
+UC3 .right.> UC5: <<include>>
+UC6 .> UC5: <<include>>
+UC4 ..> UC5: <<include>>
+UC4.1 ..> UC4: <<extend>>
+UC4.2 ..> UC4: <<extend>>
+
+json Legend{
+    "palegreen": "Main use case",
+    "gray": "Additional use case"
+}
+@enduml
+```
+
 ## Quality Goals
 
 Our top three quality goals:
