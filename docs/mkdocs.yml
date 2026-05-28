@@ -60,6 +60,8 @@ theme:
     text: Roboto
     code: Roboto Mono
 
+docs_dir: .
+
 plugins:
   - search
   - mkdocstrings:
