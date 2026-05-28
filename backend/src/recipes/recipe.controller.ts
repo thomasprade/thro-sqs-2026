@@ -1,9 +1,12 @@
 import { ApiResponse, Recipe } from '@app/shared';
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Public } from '../auth/public.decorator';
 import { CreateRecipeDto, UpdateRecipeDto } from './recipe.dto';
 import { RecipeService } from './recipe.service';
 import { toRecipe } from './recipes.mapper';
 
+// TODO: Remove @Public() when frontend implements authentication
+@Public()
 @Controller('api/recipes')
 export class RecipeController {
   constructor(private readonly recipeService: RecipeService) {}

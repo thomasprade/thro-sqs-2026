@@ -10,10 +10,13 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { Public } from '../auth/public.decorator';
 import { CreateIngredientDto, UpdateIngredientDto } from './ingredient.dto';
 import { toIngredient } from './ingredients.mapper';
 import { IngredientsService } from './ingredients.service';
 
+// TODO: Remove @Public() when frontend implements authentication
+@Public()
 @Controller('api/recipes/:recipeId/ingredients')
 export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
