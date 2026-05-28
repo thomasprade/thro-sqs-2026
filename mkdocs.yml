@@ -78,3 +78,5 @@ markdown_extensions:
 nav:
   - Home:
       - index.md
+  - arc42:
+      - arc42/01_introduction_and_goals.md
