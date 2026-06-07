@@ -37,7 +37,7 @@ describe('IngredientToolbar', () => {
     const onPortionsChange = vi.fn();
     render(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
 
-    const input = screen.getByTestId('portions-input').querySelector('input');
+    const input = screen.getByTestId('portions-input').querySelector('input')!;
     fireEvent.change(input, { target: { value: '0' } });
 
     expect(onPortionsChange).toHaveBeenCalledWith(0.5);

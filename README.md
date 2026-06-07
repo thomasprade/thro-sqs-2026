@@ -19,7 +19,7 @@ A full-stack TypeScript monorepo demonstrating software quality assurance practi
 
 ## Repository Structure
 
-```
+```text
 ├── shared/          Shared TypeScript types (API contracts)
 ├── backend/         NestJS REST API with SQLite (TypeORM)
 ├── frontend/        React SPA (Vite)
@@ -61,36 +61,53 @@ The frontend dev server proxies `/api` requests to the backend automatically.
 docker compose up --build
 ```
 
-| Service    | URL                   |
-| ---------- | --------------------- |
-| Frontend   | http://localhost:8080 |
-| Backend    | http://localhost:3000 |
-| sqlite-web | http://localhost:8081 |
+| Service    | URL                                            |
+| ---------- | ---------------------------------------------- |
+| Frontend   | [http://localhost:8080](http://localhost:8080) |
+| Backend    | [http://localhost:3000](http://localhost:3000) |
+| sqlite-web | [http://localhost:8081](http://localhost:8081) |
 
 SQLite data is persisted to the `./data/` directory on the host via a Docker volume.
+
+### Creating Users
+
+Use the backend workspace script to add a user to the local development database in `backend/data/database.sqlite`:
+
+```bash
+npm run create-user -w backend -- test test
+```
+
+Use the root script to add a user to the database shared with Docker in `./data/database.sqlite`:
+
+```bash
+npm run create-user:docker -- test test
+```
+
+In both commands, replace `test test` with the username and password you want to store.
 
 ## npm Scripts (Root)
 
 All scripts are run from the repository root.
 
-| Script                     | Description                                                 |
-| -------------------------- | ----------------------------------------------------------- |
-| `npm run setup`            | Install all dependencies and build shared types             |
-| `npm run dev`              | Start frontend and backend in watch mode (via concurrently) |
-| `npm run build`            | Build shared → backend → frontend (production)              |
-| `npm run test`             | Run backend + frontend **unit tests**                       |
-| `npm run test:e2e`         | Run backend e2e + frontend Playwright UI tests              |
-| `npm run test:integration` | Run full-stack integration tests (Playwright)               |
-| `npm run test:all`         | Run all of the above tests sequentially                     |
-| `npm run lint`             | Lint all workspaces with ESLint                             |
-| `npm run format:check`     | Check formatting with Prettier                              |
-| `npm run format`           | Auto-fix formatting with Prettier                           |
+| Script                       | Description                                                 |
+| ---------------------------- | ----------------------------------------------------------- |
+| `npm run setup`              | Install all dependencies and build shared types             |
+| `npm run dev`                | Start frontend and backend in watch mode (via concurrently) |
+| `npm run build`              | Build shared → backend → frontend (production)              |
+| `npm run test`               | Run backend + frontend **unit tests**                       |
+| `npm run test:e2e`           | Run backend e2e + frontend Playwright UI tests              |
+| `npm run test:integration`   | Run full-stack integration tests (Playwright)               |
+| `npm run test:all`           | Run all of the above tests sequentially                     |
+| `npm run create-user:docker` | Create a backend user in the Docker-shared SQLite database  |
+| `npm run lint`               | Lint all workspaces with ESLint                             |
+| `npm run format:check`       | Check formatting with Prettier                              |
+| `npm run format`             | Auto-fix formatting with Prettier                           |
 
 ## Testing Strategy
 
 This project implements a multi-layered testing approach:
 
-```
+```text
 ┌─────────────────────────────────────────────┐
 │    Full-Stack Integration Tests (e2e/)      │  Playwright — real browser,
 │    Frontend ↔ Backend ↔ Database            │  real servers, real DB

@@ -16,7 +16,9 @@ const mockRecipe: Recipe = {
 describe('RecipeFormDialog', () => {
   describe('add mode', () => {
     it('renders with empty fields and "Add Recipe" title', () => {
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={vi.fn()} />,
+      );
       expect(screen.getByText('Add Recipe')).toBeInTheDocument();
       expect(screen.getByLabelText(/title/i)).toHaveValue('');
       expect(screen.getByLabelText(/description/i)).toHaveValue('');
@@ -24,13 +26,17 @@ describe('RecipeFormDialog', () => {
     });
 
     it('Save button is disabled when title is empty', () => {
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={vi.fn()} />,
+      );
       expect(screen.getByRole('button', { name: /save/i })).toBeDisabled();
     });
 
     it('Save button is enabled when title has text', async () => {
       const user = userEvent.setup();
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={vi.fn()} />,
+      );
       await user.type(screen.getByLabelText(/title/i), 'Test');
       expect(screen.getByRole('button', { name: /save/i })).toBeEnabled();
     });
@@ -38,7 +44,7 @@ describe('RecipeFormDialog', () => {
     it('calls onSave with correct dto', async () => {
       const user = userEvent.setup();
       const onSave = vi.fn().mockResolvedValue(undefined);
-      render(<RecipeFormDialog open={true} onSave={onSave} onClose={vi.fn()} />);
+      render(<RecipeFormDialog open={true} recipe={undefined} onSave={onSave} onClose={vi.fn()} />);
 
       await user.type(screen.getByLabelText(/title/i), 'Pasta');
       await user.type(screen.getByLabelText(/description/i), 'A simple dish');
@@ -55,14 +61,18 @@ describe('RecipeFormDialog', () => {
     it('calls onClose directly when cancel is clicked with no changes', async () => {
       const user = userEvent.setup();
       const onClose = vi.fn();
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={onClose} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={onClose} />,
+      );
       await user.click(screen.getByRole('button', { name: /cancel/i }));
       expect(onClose).toHaveBeenCalled();
     });
 
     it('shows unsaved changes warning when cancel is clicked with dirty fields', async () => {
       const user = userEvent.setup();
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={vi.fn()} />,
+      );
 
       await user.type(screen.getByLabelText(/title/i), 'Something');
       await user.click(screen.getByRole('button', { name: /cancel/i }));
@@ -76,7 +86,9 @@ describe('RecipeFormDialog', () => {
     it('"Discard" in warning dialog closes the form', async () => {
       const user = userEvent.setup();
       const onClose = vi.fn();
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={onClose} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={onClose} />,
+      );
 
       await user.type(screen.getByLabelText(/title/i), 'Something');
       await user.click(screen.getByRole('button', { name: /cancel/i }));
@@ -88,7 +100,9 @@ describe('RecipeFormDialog', () => {
     it('"Keep Editing" in warning dialog keeps the form open', async () => {
       const user = userEvent.setup();
       const onClose = vi.fn();
-      render(<RecipeFormDialog open={true} onSave={vi.fn()} onClose={onClose} />);
+      render(
+        <RecipeFormDialog open={true} recipe={undefined} onSave={vi.fn()} onClose={onClose} />,
+      );
 
       await user.type(screen.getByLabelText(/title/i), 'Something');
       await user.click(screen.getByRole('button', { name: /cancel/i }));
@@ -155,7 +169,7 @@ describe('RecipeFormDialog', () => {
   });
 
   it('does not render when open is false', () => {
-    render(<RecipeFormDialog open={false} onSave={vi.fn()} onClose={vi.fn()} />);
+    render(<RecipeFormDialog open={false} recipe={undefined} onSave={vi.fn()} onClose={vi.fn()} />);
     expect(screen.queryByText('Add Recipe')).not.toBeInTheDocument();
   });
 });
