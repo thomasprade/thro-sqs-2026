@@ -74,16 +74,16 @@ SQLite data is persisted to the `./data/` directory on the host via a Docker vol
 Use the backend workspace script to add a user to the local development database in `backend/data/database.sqlite`:
 
 ```bash
-npm run create-user -w backend -- test test
+npm run create-user -w backend -- testuser testpass
 ```
 
 Use the root script to add a user to the database shared with Docker in `./data/database.sqlite`:
 
 ```bash
-npm run create-user:docker -- test test
+npm run create-user:docker -- testuser testpass
 ```
 
-In both commands, replace `test test` with the username and password you want to store.
+In both commands, replace `testuser testpass` with the username and password you want to store.
 
 ## npm Scripts (Root)
 
