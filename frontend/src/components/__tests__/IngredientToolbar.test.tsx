@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import IngredientToolbar from '../IngredientToolbar';
+import { renderWithRouter } from './test.helper';
 
 describe('IngredientToolbar', () => {
   const defaultProps = {
@@ -14,7 +15,7 @@ describe('IngredientToolbar', () => {
 
   it('does not update portions when input value is invalid', () => {
     const onPortionsChange = vi.fn();
-    render(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
+    renderWithRouter(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
 
     const input = screen.getByTestId('portions-input').querySelector('input')!;
     // Browsers report '' for invalid number input values (e.g. typing "e")
@@ -25,7 +26,7 @@ describe('IngredientToolbar', () => {
 
   it('updates portions with valid numeric input', () => {
     const onPortionsChange = vi.fn();
-    render(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
+    renderWithRouter(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
 
     const input = screen.getByTestId('portions-input').querySelector('input')!;
     fireEvent.change(input, { target: { value: '3' } });
@@ -35,7 +36,7 @@ describe('IngredientToolbar', () => {
 
   it('clamps portions to minimum 0.5', () => {
     const onPortionsChange = vi.fn();
-    render(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
+    renderWithRouter(<IngredientToolbar {...defaultProps} onPortionsChange={onPortionsChange} />);
 
     const input = screen.getByTestId('portions-input').querySelector('input')!;
     fireEvent.change(input, { target: { value: '0' } });

@@ -1,9 +1,8 @@
 import type { Recipe } from '@app/shared';
-import { act, fireEvent, render, screen } from '@testing-library/react';
-import type { ReactElement } from 'react';
-import { MemoryRouter } from 'react-router';
+import { act, fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RecipeList from '../RecipeList';
+import { AUTH_TOKEN_KEY, renderWithRouter, TEST_TOKEN } from './test.helper';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router', async () => {
@@ -30,13 +29,14 @@ const mockRecipes: Recipe[] = [
   },
 ];
 
-function renderWithRouter(ui: ReactElement) {
-  return render(<MemoryRouter>{ui}</MemoryRouter>);
-}
-
 describe('RecipeList', () => {
   beforeEach(() => {
     mockNavigate.mockClear();
+    localStorage.setItem(AUTH_TOKEN_KEY, TEST_TOKEN);
+  });
+
+  afterEach(() => {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
   });
 
   it('renders empty state when no recipes', () => {

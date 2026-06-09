@@ -9,6 +9,14 @@ const coverageDir = path.resolve(__dirname, '../.nyc_output');
 
 export const test = base.extend({
   page: async ({ page }, use) => {
+    // Ensure the app thinks the user is logged in by seeding the auth token
+    await page.addInitScript(() => {
+      try {
+        localStorage.setItem('auth_token', 'test-token');
+      } catch {
+        // noop for environments where localStorage isn't available yet
+      }
+    });
     await use(page);
 
     const coverage = await page.evaluate(() =>
