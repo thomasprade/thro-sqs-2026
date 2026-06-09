@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import RecipePage from '../RecipePage';
+import { AuthProvider } from '../../auth/AuthContext';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router', async () => {
@@ -25,6 +26,7 @@ import {
   fetchRecipe,
   updateIngredient,
 } from '../../api';
+import { AUTH_TOKEN_KEY, TEST_TOKEN } from '../../components/__tests__/test.helper';
 
 const mockRecipe: Recipe = {
   id: 1,
@@ -67,11 +69,13 @@ const mockIngredients: Ingredient[] = [
 
 function renderRecipePage() {
   return render(
-    <MemoryRouter initialEntries={['/recipe/1']}>
-      <Routes>
-        <Route path="/recipe/:id" element={<RecipePage />} />
-      </Routes>
-    </MemoryRouter>,
+    <AuthProvider>
+      <MemoryRouter initialEntries={['/recipe/1']}>
+        <Routes>
+          <Route path="/recipe/:id" element={<RecipePage />} />
+        </Routes>
+      </MemoryRouter>
+    </AuthProvider>,
   );
 }
 
@@ -79,7 +83,13 @@ describe('RecipePage', () => {
   beforeEach(() => {
     vi.mocked(fetchRecipe).mockResolvedValue(mockRecipe);
     vi.mocked(fetchIngredients).mockResolvedValue(mockIngredients);
+
     mockNavigate.mockClear();
+    localStorage.setItem(AUTH_TOKEN_KEY, TEST_TOKEN);
+  });
+
+  afterEach(() => {
+    localStorage.removeItem(AUTH_TOKEN_KEY);
   });
 
   it('shows loading state initially', () => {

@@ -1,4 +1,5 @@
 import { Box, Button, TextField } from '@mui/material';
+import { useAuth } from '../auth/AuthContext';
 
 interface IngredientToolbarProps {
   editing: boolean;
@@ -17,6 +18,8 @@ export default function IngredientToolbar({
   onToggleEdit,
   onAddClick,
 }: Readonly<IngredientToolbarProps>) {
+  const { isLoggedIn } = useAuth();
+
   return (
     <Box
       sx={{
@@ -44,25 +47,27 @@ export default function IngredientToolbar({
           data-testid="portions-input"
         />
       )}
-      <Box>
-        <Button
-          variant={editing ? 'contained' : 'outlined'}
-          onClick={onToggleEdit}
-          data-testid="edit-ingredients-toggle"
-        >
-          {editing ? 'Done' : 'Edit Ingredients'}
-        </Button>
-        {editing && (
+      {isLoggedIn && (
+        <Box>
           <Button
-            variant="outlined"
-            onClick={onAddClick}
-            sx={{ ml: 1 }}
-            data-testid="add-ingredients-button"
+            variant={editing ? 'contained' : 'outlined'}
+            onClick={onToggleEdit}
+            data-testid="edit-ingredients-toggle"
           >
-            Add Ingredients
+            {editing ? 'Done' : 'Edit Ingredients'}
           </Button>
-        )}
-      </Box>
+          {editing && (
+            <Button
+              variant="outlined"
+              onClick={onAddClick}
+              sx={{ ml: 1 }}
+              data-testid="add-ingredients-button"
+            >
+              Add Ingredients
+            </Button>
+          )}
+        </Box>
+      )}
     </Box>
   );
 }

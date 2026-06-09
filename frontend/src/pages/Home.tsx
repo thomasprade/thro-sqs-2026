@@ -72,13 +72,15 @@ export default function Home() {
         )}
       </Box>
       <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
-      <Button
-        variant="contained"
-        onClick={() => setDialogState({ open: true })}
-        sx={{ display: 'block', ml: 'auto', mb: 2 }}
-      >
-        New Recipe
-      </Button>
+      {isLoggedIn && (
+        <Button
+          variant="contained"
+          onClick={() => setDialogState({ open: true })}
+          sx={{ display: 'block', ml: 'auto', mb: 2 }}
+        >
+          New Recipe
+        </Button>
+      )}
       {dialogState.recipe ? (
         <RecipeFormDialog
           open={dialogState.open}

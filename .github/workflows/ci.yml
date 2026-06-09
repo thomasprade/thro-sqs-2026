@@ -32,6 +32,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build -w shared
+      - run: npm run build -w backend
       - run: npm run test -w backend -- --coverage
       - run: npm run test:e2e -w backend -- --coverage
       - name: Upload backend coverage
@@ -58,6 +59,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build -w shared
+      - run: npm run build -w frontend
       - run: npm run test -w frontend -- --coverage
       - name: Upload frontend coverage
         uses: actions/upload-artifact@v7
