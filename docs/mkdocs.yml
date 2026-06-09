@@ -1,64 +1,45 @@
-site_name: Recipe App
+site_name: SQS Recipe App
+site_description: Development instructions to a app that hosts your homemade recipes for friends & family
 
 # Repository
 repo_name: thomasprade/thro-sqs-2026
 repo_url: https://github.com/thomasprade/thro-sqs-2026
 
 # Copyright
-copyright: Copyright &copy; 2026 SQS Team Prade
+copyright: Made by Team 'Exorbitant SQS'
 
 theme:
   name: material
   features:
-    - announce.dismiss
-    - content.action.edit
-    - content.action.view
-    - content.code.annotate
-    - content.code.copy
-    - content.code.select
-    - content.footnote.tooltips
-    - content.tabs.link
-    - content.tooltips
-    - header.autohide
-    - navigation.expand
-    - navigation.footer
-    - navigation.indexes
     - navigation.instant
-    - navigation.instant.prefetch
-    - navigation.instant.progress
-    - navigation.prune
-    - navigation.sections
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.top
-    - navigation.tracking
+    - navigation.sections
+    - navigation.footer
     - search.highlight
-    - search.share
     - search.suggest
+    - content.code.copy
     - toc.follow
-    - toc.integrate
+    - header.autohide
   palette:
-    - media: '(prefers-color-scheme)'
-      toggle:
-        icon: material/brightness-7
-        name: Switch to light mode
     - media: '(prefers-color-scheme: light)'
       scheme: default
-      primary: indigo
-      accent: indigo
+      primary: deep orange
+      accent: orange
       toggle:
-        icon: material/brightness-2
+        icon: material/weather-night
         name: Switch to dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
-      primary: black
-      accent: indigo
+      primary: deep orange
+      accent: orange
       toggle:
-        icon: material/brightness-auto
-        name: Switch to system preference
+        icon: material/weather-sunny
+        name: Switch to light mode
   font:
-    text: Roboto
+    text: Lato
     code: Roboto Mono
+  icon:
+    logo: material/silverware-fork-knife
 
 docs_dir: .
 
