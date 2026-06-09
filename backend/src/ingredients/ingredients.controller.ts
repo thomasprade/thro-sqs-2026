@@ -10,6 +10,7 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { Public } from '../auth/public.decorator';
 import { CreateIngredientDto, UpdateIngredientDto } from './ingredient.dto';
 import { toIngredient } from './ingredients.mapper';
 import { IngredientsService } from './ingredients.service';
@@ -19,6 +20,7 @@ export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Get()
+  @Public()
   async getIngredients(
     @Param('recipeId', ParseIntPipe) recipeId: number,
   ): Promise<ApiResponse<Ingredient[]>> {

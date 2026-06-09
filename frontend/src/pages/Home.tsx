@@ -1,7 +1,9 @@
 import type { CreateRecipeDto, Recipe, UpdateRecipeDto } from '@app/shared';
-import { Button } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { createRecipe, deleteRecipe, fetchRecipes, updateRecipe } from '../api';
+import { useAuth } from '../auth/AuthContext';
+import LoginDialog from '../components/LoginDialog';
 import RecipeFormDialog from '../components/RecipeFormDialog';
 import RecipeList from '../components/RecipeList';
 
@@ -11,10 +13,12 @@ interface DialogState {
 }
 
 export default function Home() {
+  const { isLoggedIn, logout } = useAuth();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [dialogState, setDialogState] = useState<DialogState>({ open: false });
+  const [loginOpen, setLoginOpen] = useState(false);
 
   const loadRecipes = useCallback(async () => {
     try {
@@ -55,7 +59,19 @@ export default function Home() {
 
   return (
     <div>
-      <h1>Recipes</h1>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <h1 style={{ margin: 0 }}>Recipes</h1>
+        {isLoggedIn ? (
+          <Button variant="outlined" onClick={logout}>
+            Logout
+          </Button>
+        ) : (
+          <Button variant="outlined" onClick={() => setLoginOpen(true)}>
+            Login
+          </Button>
+        )}
+      </Box>
+      <LoginDialog open={loginOpen} onClose={() => setLoginOpen(false)} />
       <Button
         variant="contained"
         onClick={() => setDialogState({ open: true })}

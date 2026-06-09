@@ -16,6 +16,7 @@
     "test:e2e": "npm run test:e2e -w backend && npm run test:e2e -w frontend",
     "test:integration": "npm run test -w e2e",
     "test:all": "npm run test && npm run test:e2e && npm run test:integration",
+    "create-user:docker": "DATABASE_PATH=../data/database.sqlite npm run create-user -w backend --",
     "lint": "eslint .",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,css,md}\"",
     "format": "prettier --write \"**/*.{ts,tsx,json,css,md}\"",

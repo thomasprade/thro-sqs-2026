@@ -4,7 +4,7 @@ NestJS REST API serving the Todo application. Uses **TypeORM** with **SQLite** (
 
 ## Structure
 
-```
+```text
 backend/
 ├── src/
 │   ├── main.ts                    Application entrypoint
@@ -58,6 +58,12 @@ When running from the repository root, use the `-w` flag:
 ```bash
 npm run test -w backend
 npm run test:e2e -w backend
+```
+
+The user creation script writes to the backend-local SQLite database by default:
+
+```bash
+npm run create-user -- test test
 ```
 
 ## Configuration
