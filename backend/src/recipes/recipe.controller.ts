@@ -39,8 +39,6 @@ export class RecipeController {
   }
 
   @Delete(':id')
-  // HACK: Why do we use <{message: string}>, is that canon?
-  // If we change that, we should also change it for the ingredients.controller
   async remove(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
     await this.recipeService.remove(id);
     return { message: `Recipe #${id} deleted` };
