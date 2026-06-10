@@ -4,8 +4,6 @@ A full-stack TypeScript monorepo for managing recipes and their ingredients — 
 
 <div align="center">
 
-[![Read the Docs](https://app.readthedocs.org/projects/sqs-recipe-app/badge/?version=latest&style=for-the-badge)](https://sqs-recipe-app.readthedocs.io/en/latest/)
-
 ![CI](https://github.com/thomasprade/thro-sqs-2026/actions/workflows/ci.yml/badge.svg)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
@@ -19,57 +17,18 @@ A full-stack TypeScript monorepo for managing recipes and their ingredients — 
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=thomasprade_thro-sqs-2026&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=thomasprade_thro-sqs-2026)
 
+[![Read the Docs](https://app.readthedocs.org/projects/sqs-recipe-app/badge/?version=latest&style=for-the-badge)](https://sqs-recipe-app.readthedocs.io/en/latest/)
+
 </div>
 
-## Architecture
+## Quickstart
 
-Recipes and their Ingredients, exposed as a REST API behind JWT bearer auth.
-A React app talks to a NestJS backend, which persists data to SQLite through TypeORM.
-Shared TypeScript types in `@app/shared` are the single source of truth for the frontend/backend contract, so the wire format can never drift between the two.
-Every route is protected by default; you authenticate with a seeded user and the frontend sends an `Authorization: Bearer` token.
+This project can be run in two modes: Docker mode for local hosting with easy setup and development mode for local development.
 
-```mermaid
-flowchart LR
-    Browser["React SPA<br/>(:5173 dev / :8080 docker)"]
-    API["NestJS API (:3000)<br/>controller → service → mapper → TypeORM"]
-    DB[("SQLite<br/>DATABASE_PATH")]
-
-    Browser -- "/api (Vite dev proxy)" --> API
-    API -- "TypeORM repository" --> DB
-
-    Shared["@app/shared types"] -. "FE/BE contract" .-> Browser
-    Shared -. "FE/BE contract" .-> API
-    API -- "AuthGuard: JWT bearer<br/>(every route protected by default)" --- API
-```
-
-- In dev mode (see below), the Vite dev server (`:5173`) proxies `/api` to the backend (`:3000`).
-- Using the Docker setup, nginx serves the built frontend (`:8080`) and forwards `/api` to the backend.
-- `AuthGuard` is registered globally, so every endpoint requires a valid JWT unless explicitly marked `@Public()` (currently the recipe/ingredient `GET`s and `POST /api/auth/login`).
-
-## Repository Structure
-
-```text
-├── shared/             Shared TypeScript types (API contract)
-├── backend/            NestJS REST API with SQLite (TypeORM) + JWT auth
-├── frontend/           React 19 SPA (Vite)
-├── e2e/                Full-stack integration tests (Playwright)
-├── docs/               Documentation (arc42, ADRs, hosted on Read the Docs)
-├── data/               SQLite database files (gitignored, created on first run)
-└── docker-compose.yml  For easy local setup with docker
-```
-
-The project is an **npm-workspaces monorepo** with four workspaces: `shared`, `backend`, `frontend`, and `e2e`. Each code package has its own README with more detail:
-
-- [shared/README.md](shared/README.md) — shared type definitions
-- [backend/README.md](backend/README.md) — REST API server
-- [frontend/README.md](frontend/README.md) — React frontend
-
-## Prerequisites
+### Prerequisites
 
 - **Node.js 24**
 - **Docker & Docker Compose** (for containerised setup)
-
-## Quickstart
 
 ### Docker Mode
 
@@ -107,7 +66,7 @@ npm run dev
 
 The frontend dev server proxies `/api` requests to the backend automatically. Log in with the user you just created.
 
-## Repository Usage / Commands
+### Repository Usage / Commands
 
 All scripts run from the repository root.
 
@@ -125,6 +84,7 @@ All scripts run from the repository root.
 | `npm run format:check`       | Check formatting with Prettier                              |
 | `npm run format`             | Auto-fix formatting with Prettier                           |
 
+The project is an **npm-workspaces monorepo** with four workspaces: `shared`, `backend`, `frontend`, and `e2e`.
 Any workspace-specific command can be run from the root with the `-w` flag:
 
 ```bash
@@ -134,7 +94,50 @@ npm run build -w shared          # rebuild shared types
 npm run create-user -w backend -- <user> <pass>   # seed a dev user
 ```
 
-To run a single test (e.g. `npm run test -w backend -- recipe.service.spec.ts`) and for the full command reference, see [CLAUDE.md](CLAUDE.md).
+## Overview
+
+### Repository Structure
+
+```text
+├── shared/             Shared TypeScript types (API contract)
+├── backend/            NestJS REST API with SQLite (TypeORM) + JWT auth
+├── frontend/           React 19 SPA (Vite)
+├── e2e/                Full-stack integration tests (Playwright)
+├── docs/               Documentation (arc42, ADRs, hosted on Read the Docs)
+├── data/               SQLite database files (gitignored, created on first run)
+└── docker-compose.yml  For easy local setup with docker
+```
+
+Each code package has its own README with more detail:
+
+- [shared/README.md](shared/README.md) — shared type definitions
+- [backend/README.md](backend/README.md) — REST API server
+- [frontend/README.md](frontend/README.md) — React frontend
+
+### Architecture
+
+Recipes and their Ingredients, exposed as a REST API behind JWT bearer auth.
+A React app talks to a NestJS backend, which persists data to SQLite through TypeORM.
+Shared TypeScript types in `@app/shared` are the single source of truth for the frontend/backend contract, so the wire format can never drift between the two.
+Every route is protected by default; you authenticate with a seeded user and the frontend sends an `Authorization: Bearer` token.
+
+```mermaid
+flowchart LR
+    Browser["React SPA<br/>(:5173 dev / :8080 docker)"]
+    API["NestJS API (:3000)<br/>controller → service → mapper → TypeORM"]
+    DB[("SQLite<br/>DATABASE_PATH")]
+
+    Browser -- "/api (Vite dev proxy)" --> API
+    API -- "TypeORM repository" --> DB
+
+    Shared["@app/shared types"] -. "FE/BE contract" .-> Browser
+    Shared -. "FE/BE contract" .-> API
+    API -- "AuthGuard: JWT bearer<br/>(every route protected by default)" --- API
+```
+
+- In dev mode (see below), the Vite dev server (`:5173`) proxies `/api` to the backend (`:3000`).
+- Using the Docker setup, nginx serves the built frontend (`:8080`) and forwards `/api` to the backend.
+- `AuthGuard` is registered globally, so every endpoint requires a valid JWT unless explicitly marked `@Public()`.
 
 ### Testing Strategy
 
@@ -160,6 +163,8 @@ This project implements a multi-layered testing approach:
 | E2E (BE)    | Jest + Supertest         | `backend/test/*.e2e-spec.ts` | Full HTTP request/response cycle           |
 | UI (FE)     | Playwright               | `frontend/e2e/*.spec.ts`     | User interactions in a real browser        |
 | Integration | Playwright               | `e2e/tests/*.spec.ts`        | Complete user flows through the full stack |
+
+To run a single test, for example the in the backend, run: `npm run test -w backend -- recipe.service.spec.ts`.
 
 ## Environment Variables
 
