@@ -191,3 +191,7 @@ The GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push to `
 ## License
 
 This project is academic coursework for the Software Quality Assurance (SQS) module at TH Rosenheim and is not currently released under an open-source license. All rights reserved by the authors (Team "Exorbitant SQS").
+
+## Thanks
+
+Special Thanks to the Team behind Tanker24 for their help with the readthedocs pipeline.
