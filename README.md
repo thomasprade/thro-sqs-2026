@@ -168,14 +168,12 @@ To run a single test, for example the in the backend, run: `npm run test -w back
 
 ## Environment Variables
 
-| Variable              | What it does                                                          | Default                  | Required                    |
-| --------------------- | --------------------------------------------------------------------- | ------------------------ | --------------------------- |
-| `PORT`                | Backend HTTP listen port                                              | `3000`                   | No                          |
-| `DATABASE_PATH`       | Path to the SQLite database file                                      | `./data/database.sqlite` | No                          |
-| `JWT_SECRET`          | Secret used to sign/verify JWTs (HS256, 24h)                          | dev-only fallback value  | Yes: In any real deployment |
-| `NODE_ENV`            | Environment mode; `production` makes `JWT_SECRET` mandatory           | unset (development)      | No                          |
-| `INSTRUMENT_COVERAGE` | Enables Istanbul instrumentation for frontend e2e coverage reports    | unset                    | No                          |
-| `CI`                  | Toggles Playwright CI behaviour (retries, workers, reporter, no-only) | unset                    | No (set by CI)              |
+| Variable        | What it does                                                | Default                  | Required                    |
+| --------------- | ----------------------------------------------------------- | ------------------------ | --------------------------- |
+| `PORT`          | Backend HTTP listen port                                    | `3000`                   | No                          |
+| `DATABASE_PATH` | Path to the SQLite database file                            | `./data/database.sqlite` | No                          |
+| `JWT_SECRET`    | Secret used to sign/verify JWTs (HS256, 24h)                | dev-only fallback value  | Yes: In any real deployment |
+| `NODE_ENV`      | Environment mode; `production` makes `JWT_SECRET` mandatory | unset (development)      | No                          |
 
 When `NODE_ENV=production`, the backend refuses to start without a real `JWT_SECRET`; in development it falls back to a hardcoded value. CORS is hardcoded to `http://localhost:5173` for dev.
 
