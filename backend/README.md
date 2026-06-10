@@ -1,244 +1,186 @@
 # Backend
 
-NestJS REST API serving the Todo application. Uses **TypeORM** with **SQLite** (via `better-sqlite3`) for persistence.
+NestJS REST API for **Recipes** and their **Ingredients**, behind JWT bearer auth. Persistence is **TypeORM** on **SQLite** (via `better-sqlite3`).
+
+## Tech stack
+
+| Concern       | Choice                                                                                  |
+| ------------- | --------------------------------------------------------------------------------------- |
+| Runtime       | Node 24 (`mise.toml` / `.nvmrc`)                                                        |
+| Language      | TypeScript                                                                              |
+| Framework     | NestJS 11                                                                               |
+| Database      | SQLite file via `better-sqlite3` + TypeORM 0.3 (`synchronize: true`, **no migrations**) |
+| Validation    | `class-validator` / `class-transformer` (global `ValidationPipe`)                       |
+| Auth          | `@nestjs/jwt` (HS256) + `bcrypt`                                                        |
+| Cache         | _none_                                                                                  |
+| Message queue | _none_                                                                                  |
+
+Schema is auto-derived from entities on boot (`synchronize: true`), so there are no migration files. The API is purely request/response — see [Background jobs](#background-jobs--workers).
 
 ## Structure
 
 ```text
 backend/
 ├── src/
-│   ├── main.ts                    Application entrypoint
-│   ├── app.module.ts              Root module (TypeORM + TodoModule)
-│   └── todo/
-│       ├── todo.module.ts         Feature module
-│       ├── todo.entity.ts         TypeORM entity
-│       ├── todo.service.ts        Business logic (CRUD)
-│       ├── todo.controller.ts     REST endpoints
-│       ├── dto.ts                 Validation DTOs (class-validator)
-│       ├── todo.service.spec.ts   Unit test (service)
-│       └── todo.controller.spec.ts Unit test (controller)
+│   ├── main.ts                       Application entrypoint (CORS, ValidationPipe, port)
+│   ├── app.module.ts                 Root module (TypeORM + feature modules)
+│   ├── architecture.spec.ts          Architecture rules test (archunit)
+│   ├── auth/                         JWT auth: guard, service, users, constants
+│   ├── recipes/                      Recipe feature
+│   └── ingredients/                  Ingredient feature
+├── scripts/
+│   └── create-user.ts                Seed a login user (bcrypt-hashed)
 ├── test/
-│   ├── todo.e2e-spec.ts           E2E tests (Supertest)
-│   └── jest-e2e.json              Jest config for e2e tests
-├── nest-cli.json
-├── tsconfig.json
-├── tsconfig.build.json
-├── jest.config.js
-├── Dockerfile
-└── package.json
+│   ├── *.e2e-spec.ts                 E2E tests (Supertest, in-memory SQLite)
+│   ├── jest-e2e.json                 Jest config for e2e
+│   └── justfile                      curl smoke tests against a live backend
+└── Dockerfile
 ```
 
-## API Endpoints
+Each feature follows the same shape: `*.entity.ts` (TypeORM) → `*.service.ts` → `*.controller.ts`, with a `*.mapper.ts` (entity → shared type, strips internal fields / formats dates) and `*.dto.ts` (class-validator). Mappers keep `Entity` shapes from leaking out of controllers — reuse them when adding endpoints.
 
-All endpoints are prefixed with `/api/todos`.
+## Local setup
 
-| Method   | Path             | Description       | Request Body                              | Response              |
-| -------- | ---------------- | ----------------- | ----------------------------------------- | --------------------- |
-| `GET`    | `/api/todos`     | List all todos    | —                                         | `{ data: Todo[] }`    |
-| `GET`    | `/api/todos/:id` | Get a single todo | —                                         | `{ data: Todo }`      |
-| `POST`   | `/api/todos`     | Create a todo     | `{ title: string }`                       | `{ data: Todo }`      |
-| `PUT`    | `/api/todos/:id` | Update a todo     | `{ title?: string, completed?: boolean }` | `{ data: Todo }`      |
-| `DELETE` | `/api/todos/:id` | Delete a todo     | —                                         | `{ message: string }` |
+Setup is done in the root directory.
+See [Toplevel README.md](../README.md) for details.
 
-All responses follow the `ApiResponse<T>` shape defined in `@app/shared`.
+The SQLite file is created on first boot at `DATABASE_PATH` (default `./data/database.sqlite`, relative to the backend root).
+Deleting the sqlite file is the reset button (`data/` is gitignored).
 
-## npm Scripts
+### Seeding users
 
-| Script               | Description                                         |
-| -------------------- | --------------------------------------------------- |
-| `npm run dev`        | Start in watch mode (auto-restarts on file changes) |
-| `npm run build`      | Compile to `dist/` via NestJS CLI                   |
-| `npm run start`      | Start the compiled app from `dist/main`             |
-| `npm run start:prod` | Alias for `start` (production)                      |
-| `npm run test`       | Run unit tests with Jest                            |
-| `npm run test:e2e`   | Run e2e tests with Jest + Supertest                 |
-
-When running from the repository root, use the `-w` flag:
+There is **no signup endpoint** — users must be seeded before they can log in:
 
 ```bash
-npm run test -w backend
-npm run test:e2e -w backend
+npm run create-user -w backend -- <username> <password>
 ```
 
-The user creation script writes to the backend-local SQLite database by default:
+This runs `scripts/create-user.ts`, which bcrypt-hashes the password and inserts a row into the `users` table of the database at `DATABASE_PATH`. For the Docker-shared database, use the root-level helper instead:
 
 ```bash
-npm run create-user -- test test
+npm run create-user:docker   # from the repo root
 ```
 
-## Configuration
+## Environment variables
 
-### Database
+| Variable        | Purpose                           | Default                                                     | Format / notes                                                                  |
+| --------------- | --------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `DATABASE_PATH` | SQLite database file location     | `./data/database.sqlite`                                    | A **filesystem path**, not a connection URL. Used by the API and `create-user`. |
+| `JWT_SECRET`    | HS256 signing/verification secret | dev fallback `dev-only-jwt-secret-do-not-use-in-production` | **Required when `NODE_ENV=production`** — boot throws if unset.                 |
+| `NODE_ENV`      | Environment mode                  | _(unset)_                                                   | `production` makes `JWT_SECRET` mandatory.                                      |
+| `PORT`          | HTTP port the server listens on   | `3000`                                                      | number                                                                          |
 
-SQLite database location is controlled by the `DATABASE_PATH` environment variable:
+> The dev fallback secret exists only so local development works without configuration. Never run production without a real `JWT_SECRET`.
 
-| Context     | Value                       | Notes                             |
-| ----------- | --------------------------- | --------------------------------- |
-| Development | `./data/database.sqlite`    | Default, relative to backend root |
-| Docker      | `/app/data/database.sqlite` | Set in `docker-compose.yml`       |
-| E2E tests   | `:memory:` or temp file     | In-memory for isolation           |
+## API documentation
 
-TypeORM is configured with `synchronize: true`, meaning the schema is automatically created/updated from entities on startup. This is suitable for development — for production use, consider switching to migrations.
+The endpoints are listed below. Routes carry their `/api` prefix in each `@Controller('api/...')` decorator (there is no global prefix). CORS is hardcoded to `http://localhost:5173` in `src/main.ts`.
 
-### CORS
+### Auth — `/api/auth`
 
-CORS is enabled for `http://localhost:5173` (the Vite dev server), configured in `src/main.ts`.
+| Method | Path                | Access    | Body        | Response                          |
+| ------ | ------------------- | --------- | ----------- | --------------------------------- |
+| `POST` | `/api/auth/login`   | public    | `SignInDto` | `{ access_token: string }` (200)  |
+| `GET`  | `/api/auth/profile` | protected | —           | JWT payload (`{ sub, username }`) |
 
-### Validation
+### Recipes — `/api/recipes`
 
-A global `ValidationPipe` is enabled with:
+| Method   | Path               | Access    | Body              | Response                |
+| -------- | ------------------ | --------- | ----------------- | ----------------------- |
+| `GET`    | `/api/recipes`     | public    | —                 | `ApiResponse<Recipe[]>` |
+| `GET`    | `/api/recipes/:id` | public    | —                 | `ApiResponse<Recipe>`   |
+| `POST`   | `/api/recipes`     | protected | `CreateRecipeDto` | `ApiResponse<Recipe>`   |
+| `PUT`    | `/api/recipes/:id` | protected | `UpdateRecipeDto` | `ApiResponse<Recipe>`   |
+| `DELETE` | `/api/recipes/:id` | protected | —                 | `{ message: string }`   |
 
-- **`whitelist: true`** — strips properties not defined in the DTO
-- **`transform: true`** — auto-transforms payloads to DTO class instances
+### Ingredients — `/api/recipes/:recipeId/ingredients` (nested)
+
+| Method   | Path                                               | Access    | Body                                 | Response                    |
+| -------- | -------------------------------------------------- | --------- | ------------------------------------ | --------------------------- |
+| `GET`    | `/api/recipes/:recipeId/ingredients`               | public    | —                                    | `ApiResponse<Ingredient[]>` |
+| `POST`   | `/api/recipes/:recipeId/ingredients`               | protected | `CreateIngredientDto[]` _(an array)_ | `ApiResponse<Ingredient[]>` |
+| `PUT`    | `/api/recipes/:recipeId/ingredients/:ingredientId` | protected | `UpdateIngredientDto`                | `ApiResponse<Ingredient>`   |
+| `DELETE` | `/api/recipes/:recipeId/ingredients/:ingredientId` | protected | —                                    | `{ message: string }`       |
+
+DTO field validation lives in each module's `*.dto.ts`; the wire-contract interfaces (`Recipe`, `Ingredient`, `CreateXDto`, `UpdateXDto`) live in `@app/shared` (`shared/src/types/`).
+
+For ready-made curl examples against a live backend, see [`test/justfile`](test/justfile) (e.g. `just recipe-list`, `just recipe-create`).
+
+## Database schema / ERD
+
+`synchronize: true` derives these tables from the TypeORM entities on boot.
+
+```mermaid
+erDiagram
+    recipes ||--o{ recipe_ingredients : "has (ON DELETE CASCADE)"
+
+    recipes {
+        int      id PK "auto-increment"
+        string   title
+        string   description "default ''"
+        string   author "default 'anonymous'"
+        datetime createdAt "@CreateDateColumn"
+        datetime updatedAt "@UpdateDateColumn"
+    }
+
+    recipe_ingredients {
+        int      id PK "auto-increment"
+        int      recipeId FK "→ recipes.id"
+        string   name
+        float    amount
+        string   unit
+        datetime createdAt "@CreateDateColumn"
+        datetime updatedAt "@UpdateDateColumn"
+    }
+
+    users {
+        int      id PK "auto-increment"
+        string   username UK "unique"
+        string   passwordHash
+    }
+```
+
+- `recipe_ingredients.recipe` is a `@ManyToOne` relation with `onDelete: 'CASCADE'` — deleting a recipe removes its ingredients.
+
+## Auth model
+
+Stateless JWT bearer auth.
+
+- **Algorithm / expiry:** HS256, tokens valid for `24h` (`auth.module.ts`).
+- **Secret:** resolved in `auth.constants.ts` from `JWT_SECRET` — required in production, dev fallback otherwise (see [Environment variables](#environment-variables)).
+- **Passwords:** bcrypt-hashed (10 salt rounds); never stored in plaintext.
+- **Guard:** `AuthGuard` is registered globally via `APP_GUARD` in `auth.module.ts`, so **every route is protected by default**. Opt out with the `@Public()` decorator — currently `POST /api/auth/login` and the recipe/ingredient `GET`s.
+- **Login flow:** `POST /api/auth/login` with `{ username, password }` → `AuthService.signIn` verifies the bcrypt hash and signs a payload `{ sub: user.id, username }` → returns `{ access_token }`. Clients send it on protected routes as `Authorization: Bearer <token>`.
+- **No signup:** seed users with the `create-user` script (see [Seeding users](#seeding-users)).
 
 ## Testing
 
-### Unit Tests
+| Kind         | Location                   | Runner            | Needs a live DB?                  |
+| ------------ | -------------------------- | ----------------- | --------------------------------- |
+| Unit         | `src/**/*.spec.ts`         | Jest              | No — repositories/services mocked |
+| Architecture | `src/architecture.spec.ts` | Jest + `archunit` | No                                |
+| E2E          | `test/*.e2e-spec.ts`       | Jest + Supertest  | No — boots the app on `:memory:`  |
 
-Located alongside source files as `*.spec.ts`. Each test uses NestJS's `Test.createTestingModule` to wire up the module with mocked dependencies.
+```bash
+npm run test -w backend          # unit + architecture tests
+npm run test:e2e -w backend      # e2e tests (Supertest)
+```
 
-- **`todo.service.spec.ts`** — tests service methods with a mocked TypeORM repository
-- **`todo.controller.spec.ts`** — tests controller methods with a mocked service
+Run a single test:
 
-Run: `npm run test`
+```bash
+npm run test -w backend -- recipe.service.spec.ts      # by file
+npm run test -w backend -- -t "creates a recipe"       # by test name
+npm run test:e2e -w backend -- recipe.e2e-spec.ts      # single e2e file
+```
 
-### E2E Tests
+- **Unit** specs live next to source and wire modules via `Test.createTestingModule` with mocked TypeORM repositories / services.
+- **E2E** specs in `test/` boot the full Nest app against an **in-memory SQLite database** (`:memory:`) and exercise real HTTP routes through Supertest — no external database required. Each suite seeds its own data (e.g. a bcrypt-hashed test user for the auth flow).
+- **Manual smoke tests:** `test/justfile` holds curl recipes (`just recipe-list`, `just recipe-create`, `just ingredient-add recipe=2`, …) that assume a backend running on `localhost:3000`.
 
-Located in `test/todo.e2e-spec.ts`. Uses `@nestjs/testing` to bootstrap the full application with an **in-memory SQLite database** and `supertest` to make real HTTP requests.
-
-Covers the complete request/response cycle:
-
-- Creating, reading, updating, and deleting todos
-- Input validation (rejecting empty titles)
-- Not-found handling (404 for deleted items)
-
-Run: `npm run test:e2e`
+The cross-stack Playwright integration suite lives at the repo root in `e2e/` (`npm run test:integration`) and boots both real servers — see the root README; it is not part of this package.
 
 ## Docker
 
-The `Dockerfile` uses a multi-stage build:
-
-1. **Builder stage** — installs dependencies, builds shared types, then compiles the NestJS app
-2. **Production stage** — copies only compiled output and `node_modules`, runs with `node dist/main.js`
-
-The SQLite database file is stored at `/app/data/database.sqlite` inside the container, mapped to `./data/` on the host via Docker Compose.
-
-## TypeORM: Entities & Migrations
-
-### Current Setup (Auto-Sync)
-
-The app is configured with `synchronize: true` in `src/app.module.ts`. This means TypeORM automatically creates and alters database tables to match entity definitions on every startup. This is convenient for development but **should not be used in production** — it can cause data loss when columns are removed or renamed.
-
-### Entities
-
-Entities are TypeORM classes decorated with `@Entity()` that map directly to database tables. They live alongside their feature module (e.g. `src/todo/todo.entity.ts`).
-
-**To add or modify an entity:**
-
-1. Edit or create the entity file using TypeORM decorators:
-
-   ```typescript
-   import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-
-   @Entity('my_table')
-   export class MyEntity {
-     @PrimaryGeneratedColumn()
-     id!: number;
-
-     @Column()
-     name!: string;
-
-     @Column({ nullable: true })
-     description?: string;
-   }
-   ```
-
-2. Register the entity in `src/app.module.ts` by adding it to the `entities` array:
-
-   ```typescript
-   TypeOrmModule.forRoot({
-     // ...
-     entities: [TodoEntity, MyEntity],
-   }),
-   ```
-
-3. With `synchronize: true`, the table is created/updated automatically on the next restart.
-
-### Common Entity Decorators
-
-| Decorator                       | Purpose                                   |
-| ------------------------------- | ----------------------------------------- |
-| `@Entity('name')`               | Marks a class as a DB table               |
-| `@PrimaryGeneratedColumn()`     | Auto-incrementing primary key             |
-| `@Column()`                     | Regular column (string, number, boolean)  |
-| `@Column({ default: value })`   | Column with a default value               |
-| `@Column({ nullable: true })`   | Nullable column                           |
-| `@CreateDateColumn()`           | Auto-set to current timestamp on insert   |
-| `@UpdateDateColumn()`           | Auto-updated to current timestamp on save |
-| `@ManyToOne()` / `@OneToMany()` | Relation decorators for foreign keys      |
-
-### Switching to Migrations (Production)
-
-When you're ready to move away from auto-sync (recommended for any shared or deployed database):
-
-**1. Create a data source config file** (`src/data-source.ts`):
-
-```typescript
-import { DataSource } from 'typeorm';
-import { TodoEntity } from './todo/todo.entity';
-
-export default new DataSource({
-  type: 'better-sqlite3',
-  database: process.env.DATABASE_PATH || './data/database.sqlite',
-  entities: [TodoEntity],
-  migrations: ['./migrations/*.ts'],
-});
-```
-
-**2. Disable auto-sync** in `src/app.module.ts`:
-
-```typescript
-TypeOrmModule.forRoot({
-  // ...
-  synchronize: false,
-  migrations: ['dist/migrations/*.js'],
-  migrationsRun: true, // auto-run pending migrations on startup
-}),
-```
-
-**3. Generate a migration** from entity changes:
-
-```bash
-npx typeorm migration:generate -d src/data-source.ts migrations/InitialSchema
-```
-
-This compares your current entities against the database and generates a migration file with the required SQL.
-
-**4. Create an empty migration** (for manual SQL):
-
-```bash
-npx typeorm migration:create migrations/AddUserTable
-```
-
-**5. Run pending migrations:**
-
-```bash
-npx typeorm migration:run -d src/data-source.ts
-```
-
-**6. Revert the last migration:**
-
-```bash
-npx typeorm migration:revert -d src/data-source.ts
-```
-
-### Migration Workflow Summary
-
-| Command                                                      | Description                              |
-| ------------------------------------------------------------ | ---------------------------------------- |
-| `migration:generate -d src/data-source.ts migrations/<Name>` | Auto-generate migration from entity diff |
-| `migration:create migrations/<Name>`                         | Create empty migration for manual SQL    |
-| `migration:run -d src/data-source.ts`                        | Run all pending migrations               |
-| `migration:revert -d src/data-source.ts`                     | Revert the most recent migration         |
-
-All commands are prefixed with `npx typeorm` and should be run from the `backend/` directory.
+Dockerfile build a container for the local deployment of the backend.
+The SQLite file lives at `/app/data/database.sqlite` in the container, mapped to `./data/` on the host via Docker Compose.
