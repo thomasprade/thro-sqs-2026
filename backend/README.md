@@ -1,21 +1,21 @@
 # Backend
 
-NestJS REST API for **Recipes** and their **Ingredients**, behind JWT bearer auth. Persistence is **TypeORM** on **SQLite** (via `better-sqlite3`).
+NestJS REST API for Recipes and their Ingredients management, behind JWT bearer auth.
+Persistence is TypeORM on SQLite (via `better-sqlite3`).
 
 ## Tech stack
 
-| Concern       | Choice                                                                                  |
-| ------------- | --------------------------------------------------------------------------------------- |
-| Runtime       | Node 24 (`mise.toml` / `.nvmrc`)                                                        |
-| Language      | TypeScript                                                                              |
-| Framework     | NestJS 11                                                                               |
-| Database      | SQLite file via `better-sqlite3` + TypeORM 0.3 (`synchronize: true`, **no migrations**) |
-| Validation    | `class-validator` / `class-transformer` (global `ValidationPipe`)                       |
-| Auth          | `@nestjs/jwt` (HS256) + `bcrypt`                                                        |
-| Cache         | _none_                                                                                  |
-| Message queue | _none_                                                                                  |
+| Concern    | Choice                                                                              |
+| ---------- | ----------------------------------------------------------------------------------- |
+| Runtime    | Node 24 (`mise.toml` / `.nvmrc`)                                                    |
+| Language   | TypeScript                                                                          |
+| Framework  | NestJS 11                                                                           |
+| Database   | SQLite file via `better-sqlite3` + TypeORM 0.3 (`synchronize: true`, no migrations) |
+| Validation | `class-validator` / `class-transformer` (global `ValidationPipe`)                   |
+| Auth       | `@nestjs/jwt` (HS256) + `bcrypt`                                                    |
 
-Schema is auto-derived from entities on boot (`synchronize: true`), so there are no migration files. The API is purely request/response — see [Background jobs](#background-jobs--workers).
+Schema is auto-derived from entities on boot (`synchronize: true`), so there are no migration files.
+The API is purely request/response.
 
 ## Structure
 
@@ -37,7 +37,8 @@ backend/
 └── Dockerfile
 ```
 
-Each feature follows the same shape: `*.entity.ts` (TypeORM) → `*.service.ts` → `*.controller.ts`, with a `*.mapper.ts` (entity → shared type, strips internal fields / formats dates) and `*.dto.ts` (class-validator). Mappers keep `Entity` shapes from leaking out of controllers — reuse them when adding endpoints.
+Each feature follows the same shape: `*.entity.ts` (TypeORM) → `*.service.ts` → `*.controller.ts`, with a `*.mapper.ts` (entity → shared type, strips internal fields / formats dates) and `*.dto.ts` (class-validator).
+Mappers keep `Entity` shapes from leaking out of controllers — reuse them when adding endpoints.
 
 ## Local setup
 
@@ -49,7 +50,7 @@ Deleting the sqlite file is the reset button (`data/` is gitignored).
 
 ### Seeding users
 
-There is **no signup endpoint** — users must be seeded before they can log in:
+There is no signup endpoint, so users must be seeded before they can log in:
 
 ```bash
 npm run create-user -w backend -- <username> <password>
@@ -174,9 +175,9 @@ npm run test -w backend -- -t "creates a recipe"       # by test name
 npm run test:e2e -w backend -- recipe.e2e-spec.ts      # single e2e file
 ```
 
-- **Unit** specs live next to source and wire modules via `Test.createTestingModule` with mocked TypeORM repositories / services.
-- **E2E** specs in `test/` boot the full Nest app against an **in-memory SQLite database** (`:memory:`) and exercise real HTTP routes through Supertest — no external database required. Each suite seeds its own data (e.g. a bcrypt-hashed test user for the auth flow).
-- **Manual smoke tests:** `test/justfile` holds curl recipes (`just recipe-list`, `just recipe-create`, `just ingredient-add recipe=2`, …) that assume a backend running on `localhost:3000`.
+- Unit specs live next to source and wire modules via `Test.createTestingModule` with mocked TypeORM repositories / services.
+- E2E specs in `test/` boot the full Nest app against an in-memory SQLite database(`:memory:`) and exercise real HTTP routes through Supertest — no external database required. Each suite seeds its own data (e.g. a bcrypt-hashed test user for the auth flow).
+- Manual smoke tests:`test/justfile` holds curl recipes (`just recipe-list`, `just recipe-create`, `just ingredient-add recipe=2`, …) that assume a backend running on `localhost:3000`.
 
 The cross-stack Playwright integration suite lives at the repo root in `e2e/` (`npm run test:integration`) and boots both real servers — see the root README; it is not part of this package.
 
