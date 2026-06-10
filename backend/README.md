@@ -64,12 +64,12 @@ npm run create-user:docker   # from the repo root
 
 ## Environment variables
 
-| Variable        | Purpose                           | Default                                                     | Format / notes                                                                  |
-| --------------- | --------------------------------- | ----------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `DATABASE_PATH` | SQLite database file location     | `./data/database.sqlite`                                    | A **filesystem path**, not a connection URL. Used by the API and `create-user`. |
-| `JWT_SECRET`    | HS256 signing/verification secret | dev fallback `dev-only-jwt-secret-do-not-use-in-production` | **Required when `NODE_ENV=production`** — boot throws if unset.                 |
-| `NODE_ENV`      | Environment mode                  | _(unset)_                                                   | `production` makes `JWT_SECRET` mandatory.                                      |
-| `PORT`          | HTTP port the server listens on   | `3000`                                                      | number                                                                          |
+| Variable        | Purpose                           | Default                                                     | Format / notes                                              |
+| --------------- | --------------------------------- | ----------------------------------------------------------- | ----------------------------------------------------------- |
+| `DATABASE_PATH` | SQLite database file location     | `./data/database.sqlite`                                    | A filesystem path. Used by the API and `create-user`.       |
+| `JWT_SECRET`    | HS256 signing/verification secret | dev fallback `dev-only-jwt-secret-do-not-use-in-production` | Required when `NODE_ENV=production` — boot throws if unset. |
+| `NODE_ENV`      | Environment mode                  | _(unset)_                                                   | `production` makes `JWT_SECRET` mandatory.                  |
+| `PORT`          | HTTP port the server listens on   | `3000`                                                      | number                                                      |
 
 > The dev fallback secret exists only so local development works without configuration. Never run production without a real `JWT_SECRET`.
 
@@ -81,7 +81,7 @@ The endpoints are listed below. Routes carry their `/api` prefix in each `@Contr
 
 | Method | Path                | Access    | Body        | Response                          |
 | ------ | ------------------- | --------- | ----------- | --------------------------------- |
-| `POST` | `/api/auth/login`   | public    | `SignInDto` | `{ access_token: string }` (200)  |
+| `POST` | `/api/auth/login`   | public    | `SignInDto` | `{ access_token: string }`        |
 | `GET`  | `/api/auth/profile` | protected | —           | JWT payload (`{ sub, username }`) |
 
 ### Recipes — `/api/recipes`
@@ -147,12 +147,12 @@ erDiagram
 
 Stateless JWT bearer auth.
 
-- **Algorithm / expiry:** HS256, tokens valid for `24h` (`auth.module.ts`).
-- **Secret:** resolved in `auth.constants.ts` from `JWT_SECRET` — required in production, dev fallback otherwise (see [Environment variables](#environment-variables)).
-- **Passwords:** bcrypt-hashed (10 salt rounds); never stored in plaintext.
-- **Guard:** `AuthGuard` is registered globally via `APP_GUARD` in `auth.module.ts`, so **every route is protected by default**. Opt out with the `@Public()` decorator — currently `POST /api/auth/login` and the recipe/ingredient `GET`s.
-- **Login flow:** `POST /api/auth/login` with `{ username, password }` → `AuthService.signIn` verifies the bcrypt hash and signs a payload `{ sub: user.id, username }` → returns `{ access_token }`. Clients send it on protected routes as `Authorization: Bearer <token>`.
-- **No signup:** seed users with the `create-user` script (see [Seeding users](#seeding-users)).
+- Algorithm / expiry: HS256, tokens valid r `24h` (`auth.module.ts`).
+- Secret: resolved in `auth.constants.ts` from `JWT_SECRET` — required in production, dev fallback otherwise (see [Environment variables](#environment-variables)).
+- Passwords: bcrypt-hashed (10 salt rounds); never stored in plaintext.
+- Guard: `AuthGuard` is registered globally via `APP_GUARD` in `auth.module.ts`, so every route is protected by default. Opt out with the `@Public()` decorator — currently `POST /api/auth/login` and the recipe/ingredient `GET`s.
+- Login flow: `POST /api/auth/login` with `{ username, password }` → `AuthService.signIn` verifies the bcrypt hash and signs a payload `{ sub: user.id, username }` → returns `{ access_token }`. Clients send it on protected routes as `Authorization: Bearer <token>`.
+- No signup: seed users with the `create-user` script (see [Seeding users](#seeding-users)).
 
 ## Testing
 
