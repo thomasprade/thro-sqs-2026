@@ -12,7 +12,7 @@ respect the following technical and organizational constraints.
 | Platform independent  | Runs on Linux, macOS and Windows; no OS-specific dependencies.                                       |
 | Layered architecture  | The system follows a layered architecture; see [ADR-001](../adr/adr001_core_architecture.md).        |
 | Runnable from the CLI | The app can be started entirely from the command line, without an IDE.                               |
-| Setup in ≤ 2 commands | The app is installable and runnable with at most two commands (`npm run setup`, `npm run dev`).      |
+| Setup in ≤ 2 commands | The app is installable and runnable with at most two commands (`docker compose up --build`).         |
 
 ## Organizational Constraints & Conventions
 
