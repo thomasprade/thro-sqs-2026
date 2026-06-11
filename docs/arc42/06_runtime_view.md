@@ -93,10 +93,10 @@ actor User
 participant "Frontend" as FE
 participant "Backend" as BE
 database "SQLite" as DB
-cloud "PDF API" as PDF
+participant "PDF API" as PDF
 
 User -> FE : request PDF export
-FE -> BE : POST /api/recipes/:id/export\nAuthorization: Bearer <jwt>
+FE -> BE : POST /api/recipes/:id/export\nAuthorization: Bearer {jwt}
 BE -> DB : load recipe + ingredients
 BE -> PDF : HTTPS render request
 alt PDF API available
