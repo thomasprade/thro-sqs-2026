@@ -6,14 +6,14 @@ constraints (chapter [02](02_architecture_constraints.md)).
 
 ## Technology Decisions
 
-| Decision                     | Rationale                                                                                                                         |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| TypeScript everywhere        | One language for backend, frontend and shared types reduces context switching (see chapter [02](02_architecture_constraints.md)). |
-| Shared types as the contract | `@app/shared` holds the domain types and DTOs used by both ends, so the API contract cannot drift.                                |
-| NestJS backend               | Opinionated, modular framework that fits the layered architecture and provides validation and auth out of the box.                |
-| React 19 + Vite frontend     | A single-page app with fast dev tooling for a clean, minimalistic UI.                                                             |
-| TypeORM + SQLite persistence | A single local file database; zero external infrastructure to run or operate.                                                     |
-| Docker Compose for setup     | The whole stack starts with `docker compose up --build`, meeting the ≤ 2-command setup constraint.                                |
+| Decision                     | Rationale                                                                                                          |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| TypeScript everywhere        | One language for backend, frontend and shared types reduces context switching.                                     |
+| Shared types as the contract | `@app/shared` holds the domain types and DTOs used by both ends, so the API contract cannot drift.                 |
+| NestJS backend               | Opinionated, modular framework that fits the layered architecture and provides validation and auth out of the box. |
+| React 19 + Vite frontend     | A single-page app with fast dev tooling for a clean, minimalistic UI.                                              |
+| TypeORM + SQLite persistence | A single local file database; zero external infrastructure to run or operate.                                      |
+| Docker Compose for setup     | The whole stack starts with `docker compose up --build`, meeting the ≤ 2-command setup constraint.                 |
 
 ## Decomposition
 

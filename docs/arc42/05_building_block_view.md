@@ -5,7 +5,7 @@ The static decomposition of the Recipe App into building blocks and their depend
 - Level 1: shows the overall system as a white box with its top-level building blocks.
 - Level 2: zooms into the backend and the frontend.
 
-## Whitebox Overall System
+## Level 1: Whitebox Overall System
 
 ```puml
 @startuml
@@ -25,7 +25,7 @@ be ..> pdf : HTTPS (planned)
 @enduml
 ```
 
-Motivation: The system is split along a layered architecture
+The system is split along a layered architecture
 (see [ADR-001](../adr/adr001_core_architecture.md)) so that the user interface, the API logic and
 the data store can be understood and changed independently.
 
@@ -45,23 +45,23 @@ the contract between them.
 
 ```puml
 @startuml
+left to right direction
 skinparam componentStyle rectangle
 
-[Controller] as ctrl
-[Service] as svc
-[Mapper] as map
-[Entity / Repository] as repo
+node "Controller\n(HTTP)" as ctrl
+node "Service\n(logic)" as svc
+node "Mapper\n(entity → type)" as map
+node "Entity / Repository\n(TypeORM)" as repo
 database "SQLite" as db
+node "AuthGuard\n(JWT)" as guard
+node "ValidationPipe" as pipe
 
-[AuthGuard] as guard
-[ValidationPipe] as pipe
-
-guard ..> ctrl : protects (JWT)
+guard ..> ctrl : protects
 pipe ..> ctrl : validates DTO
 ctrl --> svc
+svc --> map : maps result
 svc --> repo
-svc --> map
-repo --> db
+repo --> db : SQL
 @enduml
 ```
 
@@ -78,6 +78,33 @@ global `ValidationPipe`.
 | Auth        | Issues JWTs via `POST /api/auth/login`, verifies bearer tokens and hashes passwords (bcrypt).         |
 
 ## Level 2: Frontend
+
+```puml
+@startuml
+left to right direction
+skinparam componentStyle rectangle
+
+actor "User" as user
+node "Home\n(list + search)" as home
+node "RecipePage\n(detail + scaling)" as recipe
+node "Dialogs & Components\n(MUI)" as comp
+node "AuthContext\n(JWT state)" as auth
+node "api.ts\n(API client)" as api
+cloud "Backend\n(/api)" as be
+
+user --> home
+user --> recipe
+home --> comp
+recipe --> comp
+home --> api
+recipe --> api
+api ..> auth : reads token
+api --> be : REST /api (Bearer)
+@enduml
+```
+
+The pages and reusable components render the UI; all backend traffic goes through the `api.ts`
+client, which attaches the JWT held by `AuthContext`.
 
 | Building Block             | Responsibility                                                                         |
 | -------------------------- | -------------------------------------------------------------------------------------- |
