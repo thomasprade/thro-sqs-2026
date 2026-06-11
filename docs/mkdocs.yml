@@ -79,3 +79,4 @@ nav:
       - adr:
           - adr/adr001_core_architecture.md
           - adr/adr002_secure_endpoint.md
+          - adr/adr003_node_version.md
