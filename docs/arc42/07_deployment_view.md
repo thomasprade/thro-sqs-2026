@@ -50,7 +50,7 @@ to the public.
   in production `JWT_SECRET` must be set (see [ADR-002](../adr/adr002_secure_endpoint.md)).
 - All services use `restart: unless-stopped`. The `./data` directory is gitignored and created on
   first run.
-- Under Linux: Depending on the hosts settings the `./data` directory is owned by `root`. In this case the ownership of the directory must first be change to the user, before a new user can be added. Alternatively use `podman` instead.
+- Under Linux: Depending on the host's settings the `./data` directory is owned by `root`. In this case the ownership of the directory must first be change to the user, before a new user can be added. Alternatively use `podman` instead.
 
 For day-to-day development the stack is run without Docker via `npm run dev` (frontend on `:5173`
 proxying `/api` to the backend on `:3000`); the building blocks are identical, only the hosting and
