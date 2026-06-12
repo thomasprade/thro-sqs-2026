@@ -1,7 +1,7 @@
 import type { Ingredient, Recipe } from '@app/shared';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import RecipePage from '../RecipePage';
 import { AuthProvider } from '../../auth/AuthContext';
 
