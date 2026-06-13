@@ -42,11 +42,11 @@ registered --> UC4
 
 Our top three quality goals (categories based on ISO 25010):
 
-| Priority | Quality Goal (ISO 25010) | Scenario                                                                                                                                          |
-| -------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1        | Reliability              | Recipes and ingredients are always displayed accurately. When the external PDF API is unavailable, the app stays usable and recovers gracefully.  |
-| 2        | Performance Efficiency   | The app starts in under 2 s. All in-app actions (excluding PDF generation) respond in under 1 s.                                                  |
-| 3        | Security                 | Write operations require a valid JWT bearer token; unauthenticated write requests are rejected (see [ADR-002](../adr/adr002_secure_endpoint.md)). |
+| Priority | Quality Goal (ISO 25010) | Scenario                                                                                                                                             |
+| -------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1        | Reliability              | Recipes and ingredients are always displayed accurately. When the external Weather API is unavailable, the app stays usable and recovers gracefully. |
+| 2        | Performance Efficiency   | The app starts in under 2 s. All in-app actions (excluding weather data fetching) respond in under 1 s.                                              |
+| 3        | Security                 | Write operations require a valid JWT bearer token; unauthenticated write requests are rejected (see [ADR-002](../adr/adr002_secure_endpoint.md)).    |
 
 ## Stakeholders
 

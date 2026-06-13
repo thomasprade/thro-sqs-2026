@@ -6,6 +6,7 @@ import type {
   Recipe,
   UpdateIngredientDto,
   UpdateRecipeDto,
+  Weather,
 } from '@app/shared';
 
 const API_BASE = '/api/recipes';
@@ -118,4 +119,11 @@ export async function deleteIngredient(recipeId: number, ingredientId: number): 
     method: 'DELETE',
   });
   if (!res.ok) throw new Error('Failed to delete ingredient');
+}
+
+export async function getWeather(): Promise<Weather> {
+  const res = await apiFetch('/api/weather');
+  if (!res.ok) throw new Error('Failed to fetch weather');
+  const body = (await res.json()) as ApiResponse<Weather>;
+  return body.data;
 }

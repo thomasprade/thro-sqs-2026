@@ -82,35 +82,30 @@ Login returns a JWT that the frontend stores and sends on every write. The globa
 verifies the bearer token and the `ValidationPipe` checks the request body before the controller
 runs; an invalid or missing token is rejected with `401`.
 
-## Scenario 4: Export Recipe as PDF (UC-03 — Planned)
-
-!!! note "Planned"
-This flow is not yet implemented (see requirement #4). It documents the intended behaviour.
+## Scenario 4: Display Current Weather
 
 ```puml
 @startuml
 actor User
 participant "Frontend" as FE
 participant "Backend" as BE
-database "SQLite" as DB
-participant "PDF API" as PDF
+participant "Weather API\n(open-meteo.com)" as WA
 
-User -> FE : request PDF export
-FE -> BE : POST /api/recipes/:id/export\nAuthorization: Bearer {jwt}
-BE -> DB : load recipe + ingredients
-BE -> PDF : HTTPS render request
-alt PDF API available
-  PDF --> BE : PDF document
-  BE --> FE : PDF file
-  FE --> User : download PDF
-else PDF API unavailable
-  BE --> FE : error (fail-safe)
-  FE --> User : app stays usable
+User -> FE : opens app (Home or Recipe page)
+FE -> BE : GET /api/weather (public, no JWT)
+BE -> WA : HTTPS GET current weather
+alt Weather API available
+  WA --> BE : temperature + weather code
+  BE --> FE : { data: { temperature, weatherCode } }
+  FE --> User : shows icon + temperature in header
+else Weather API unavailable (circuit breaker open)
+  BE --> FE : HTTP 500 (Internal Server Error)
+  FE --> User : shows error message; rest of app stays usable
 end
 @enduml
 ```
 
-The export is an authenticated request. The backend gathers the recipe and its ingredients and
-delegates rendering to the external PDF API over HTTPS. A timeout / fallback isolates that call so
-the rest of the app keeps working when the PDF API is unavailable (Reliability goal, chapter
-[01](01_introduction_and_goals.md)).
+The weather request is public (no JWT required). The backend calls the external Weather API via
+`WeatherRepository`, which wraps the HTTP call in an opossum circuit breaker. When the circuit
+breaker is open the call fails gracefully and the frontend shows an error message without
+affecting other functionality (Reliability goal, chapter [01](01_introduction_and_goals.md)).

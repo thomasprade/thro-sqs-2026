@@ -12,11 +12,11 @@ Identified risks and technical debt, ordered by priority, with suggested measure
 
 ## Technical Debt
 
-| Item                                  | Description                                                                                                     | Suggested measure                                               |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| PDF export not implemented            | UC-03 is documented but not yet built (requirement #4); no backend endpoint or external API integration exists. | Implement the export endpoint with the planned fail-safe call.  |
-| Hardcoded CORS origin                 | The allowed origin is hardcoded to `http://localhost:5173` in `main.ts`.                                        | Move to configuration if more origins are needed.               |
-| `DELETE` breaks the response envelope | `DELETE` returns a bare `{ message }` instead of `ApiResponse<T>` (a documented HACK).                          | Normalize the envelope across all verbs if consistency matters. |
+| Item                                  | Description                                                                                                                                        | Suggested measure                                                                 |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Weather API availability              | The external Weather API (open-meteo.com) is a third-party service with no SLA guarantee; downtime or rate-limiting may affect the weather widget. | The opossum circuit breaker isolates failures; the rest of the app is unaffected. |
+| Hardcoded CORS origin                 | The allowed origin is hardcoded to `http://localhost:5173` in `main.ts`.                                                                           | Move to configuration if more origins are needed.                                 |
+| `DELETE` breaks the response envelope | `DELETE` returns a bare `{ message }` instead of `ApiResponse<T>` (a documented HACK).                                                             | Normalize the envelope across all verbs if consistency matters.                   |
 
 ## Business or Domain Risk
 

@@ -27,7 +27,8 @@ backend/
 │   ├── architecture.spec.ts          Architecture rules test (archunit)
 │   ├── auth/                         JWT auth: guard, service, users, constants
 │   ├── recipes/                      Recipe feature
-│   └── ingredients/                  Ingredient feature
+│   ├── ingredients/                  Ingredient feature
+│   └── weather/                      Weather feature
 ├── scripts/
 │   └── create-user.ts                Seed a login user (bcrypt-hashed)
 ├── test/

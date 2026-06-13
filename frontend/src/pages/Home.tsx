@@ -6,6 +6,7 @@ import { useAuth } from '../auth/AuthContext';
 import LoginDialog from '../components/LoginDialog';
 import RecipeFormDialog from '../components/RecipeFormDialog';
 import RecipeList from '../components/RecipeList';
+import Weather from '../components/Weather';
 
 interface DialogState {
   open: boolean;
@@ -61,6 +62,7 @@ export default function Home() {
     <div>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <h1 style={{ margin: 0 }}>Recipes</h1>
+        <Weather />
         {isLoggedIn ? (
           <Button variant="outlined" onClick={logout}>
             Logout

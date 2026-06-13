@@ -16,12 +16,12 @@ actor "User" as user
 node "Frontend\n(React SPA)" as fe
 node "Backend\n(NestJS REST API)" as be
 database "SQLite\n(DATABASE_PATH)" as db
-cloud "PDF API\n(external, planned)" as pdf
+cloud "Weather API\n(open-meteo.com)" as weather
 
 user --> fe
 fe --> be : REST /api (JSON, JWT bearer)
 be --> db : SQL (file)
-be ..> pdf : HTTPS (planned)
+be --> weather : HTTPS
 @enduml
 ```
 
@@ -31,12 +31,12 @@ the data store can be understood and changed independently.
 
 **Contained Building Blocks:**
 
-| Name                 | Responsibility                                                                                    |
-| -------------------- | ------------------------------------------------------------------------------------------------- |
-| Frontend (React SPA) | Renders the UI, lets users browse, search and manage recipes, and talks to the backend over REST. |
-| Backend (NestJS API) | Exposes the `/api` REST endpoints, validates input, enforces authentication and persists data.    |
-| Database (SQLite)    | Stores recipes, ingredients and users in a single local file.                                     |
-| PDF API (external)   | Renders a recipe into a PDF document. _Planned — not yet integrated (see requirement #4)._        |
+| Name                   | Responsibility                                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Frontend (React SPA)   | Renders the UI, lets users browse, search and manage recipes, and talks to the backend over REST.                              |
+| Backend (NestJS API)   | Exposes the `/api` REST endpoints, validates input, enforces authentication and persists data.                                 |
+| Database (SQLite)      | Stores recipes, ingredients and users in a single local file.                                                                  |
+| Weather API (external) | Provides the current temperature and WMO weather code (open-meteo.com). Used by the Weather component shown in the app header. |
 
 The `@app/shared` package holds the domain types and DTOs shared by frontend and backend; it is
 the contract between them.

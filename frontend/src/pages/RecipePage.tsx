@@ -1,6 +1,6 @@
 import type { CreateIngredientDto, Ingredient, Recipe, UpdateIngredientDto } from '@app/shared';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Button, Container, Typography } from '@mui/material';
+import { Box, Button, Container, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
@@ -13,6 +13,7 @@ import {
 import IngredientFormDialog from '../components/IngredientFormDialog';
 import IngredientList from '../components/IngredientList';
 import IngredientToolbar from '../components/IngredientToolbar';
+import Weather from '../components/Weather';
 
 export default function RecipePage() {
   const { id } = useParams<{ id: string }>();
@@ -90,6 +91,9 @@ export default function RecipePage() {
 
   return (
     <Container sx={{ py: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+        <Weather />
+      </Box>
       <Button
         startIcon={<ArrowBackIcon />}
         onClick={() => navigate('/')}
