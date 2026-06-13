@@ -11,7 +11,8 @@ A short description of the core functional requirements for our system. For a de
 | --------- | ------------------------------------------------------------------------------ |
 | UC-01     | The system shall display a searchable overview of all recipes                  |
 | UC-02     | The system shall display recipes on a dedicated page with scalable ingredients |
-| UC-03     | The system shall allow registered users to export recipes as PDF               |
+| UC-03     | The system shall allow registered users to create new recipes                  |
+| UC-04     | The system shall allow registered users to edit existing recipes               |
 
 ```puml
 @startuml
@@ -24,7 +25,8 @@ actor "Registered User" as registered
 rectangle "Recipe App" {
   usecase "UC-01\nBrowse & search recipes" as UC1
   usecase "UC-02\nView recipe with\nscalable ingredients" as UC2
-  usecase "UC-03\nExport recipe as PDF" as UC3
+  usecase "UC-03\nCreate new recipe" as UC3
+  usecase "UC-04\nEdit existing recipe" as UC4
 }
 
 registered --|> user
@@ -32,6 +34,7 @@ registered --|> user
 user --> UC1
 user --> UC2
 registered --> UC3
+registered --> UC4
 @enduml
 ```
 
