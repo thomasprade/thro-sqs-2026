@@ -47,7 +47,7 @@ Our top three quality goals (categories based on ISO 25010):
 
 ## Stakeholders
 
-| Role              | Contact Channels     | Expectations                                                    |
-| ----------------- | -------------------- | --------------------------------------------------------------- |
-| Dev Team          | Lecture, Dev channel | Guided introduction to professional software quality assurance  |
-| Course Instructor | Lecture, Mail        | Adherence of project to course requirements listed in checklist |
+| Role              | Contact Channels     | Expectations                                                                                          |
+| ----------------- | -------------------- | ----------------------------------------------------------------------------------------------------- |
+| Dev Team          | Lecture, Dev channel | Guided introduction to professional software quality assurance                                        |
+| Course Instructor | Lecture, Mail        | Adherence of project to course requirements listed in the [requirements document](../requirements.md) |
