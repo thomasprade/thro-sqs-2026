@@ -93,43 +93,43 @@ jobs:
           name: frontend-e2e-coverage
           path: frontend/coverage-e2e/lcov.info
 
-  # integration-tests:
-  #   name: Full-Stack Integration
-  #   runs-on: ubuntu-latest
-  #   needs: [backend-tests, frontend-tests]
-  #   steps:
-  #     - uses: actions/checkout@v6
-  #     - uses: actions/setup-node@v6
-  #       with:
-  #         node-version: 24
-  #         cache: npm
-  #     - run: npm ci
-  #     - run: npm run build -w shared
-  #     - name: Get Playwright version
-  #       id: playwright-version
-  #       run: echo "PLAYWRIGHT_VERSION=$(jq -r '.packages["node_modules/@playwright/test"].version' package-lock.json)" >> $GITHUB_OUTPUT
-  #     - name: Cache Playwright browsers
-  #       uses: actions/cache@v4
-  #       id: playwright-cache
-  #       with:
-  #         path: ~/.cache/ms-playwright
-  #         key: playwright-${{ steps.playwright-version.outputs.PLAYWRIGHT_VERSION }}-chromium
-  #     - name: Install Playwright browsers
-  #       if: steps.playwright-cache.outputs.cache-hit != 'true'
-  #       run: npx playwright install chromium
-  #       working-directory: e2e
-  #       timeout-minutes: 5
-  #     - name: Install Playwright system dependencies
-  #       run: npx playwright install-deps chromium
-  #       working-directory: e2e
-  #     - run: npm run test:integration
-  #     - name: Upload Playwright report
-  #       uses: actions/upload-artifact@v7
-  #       if: ${{ !cancelled() }}
-  #       with:
-  #         name: playwright-report
-  #         path: e2e/playwright-report/
-  #         retention-days: 30
+  integration-tests:
+    name: Full-Stack Integration
+    runs-on: ubuntu-latest
+    needs: [backend-tests, frontend-tests]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w shared
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(jq -r '.packages["node_modules/@playwright/test"].version' package-lock.json)" >> $GITHUB_OUTPUT
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ steps.playwright-version.outputs.PLAYWRIGHT_VERSION }}-chromium
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
+        working-directory: e2e
+        timeout-minutes: 5
+      - name: Install Playwright system dependencies
+        run: npx playwright install-deps chromium
+        working-directory: e2e
+      - run: npm run test:integration
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v7
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: e2e/playwright-report/
+          retention-days: 30
 
   sonarqube:
     name: SonarQube

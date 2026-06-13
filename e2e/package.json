@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:clean": "rm -f ../backend/data/test-integration.sqlite && FRESH_SERVERS=1 playwright test",
+    "test:ui": "rm -f ../backend/data/test-integration.sqlite && FRESH_SERVERS=1 playwright test --ui"
   },
   "devDependencies": {
     "@playwright/test": "^1.51.0"
