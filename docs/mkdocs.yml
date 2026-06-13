@@ -23,15 +23,15 @@ theme:
   palette:
     - media: '(prefers-color-scheme: light)'
       scheme: default
-      primary: deep orange
-      accent: orange
+      primary: teal
+      accent: cyan
       toggle:
         icon: material/weather-night
         name: Switch to dark mode
     - media: '(prefers-color-scheme: dark)'
       scheme: slate
-      primary: deep orange
-      accent: orange
+      primary: orange
+      accent: amber
       toggle:
         icon: material/weather-sunny
         name: Switch to light mode
@@ -79,3 +79,4 @@ nav:
       - adr:
           - adr/adr001_core_architecture.md
           - adr/adr002_secure_endpoint.md
+          - adr/adr003_node_version.md
