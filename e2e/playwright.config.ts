@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
+  globalSetup: './global-setup.ts',
+  globalTeardown: './global-teardown.ts',
   testDir: './tests',
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -21,7 +23,8 @@ export default defineConfig({
     {
       command: 'npm run dev -w backend',
       url: 'http://localhost:3000/api/recipes',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: !process.env.CI && !process.env.FRESH_SERVERS,
+      timeout: 120_000,
       cwd: '..',
       env: {
         DATABASE_PATH: './data/test-integration.sqlite',
@@ -30,7 +33,8 @@ export default defineConfig({
     {
       command: 'npm run dev -w frontend',
       url: 'http://localhost:5173',
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: !process.env.CI && !process.env.FRESH_SERVERS,
+      timeout: 60_000,
       cwd: '..',
     },
   ],
