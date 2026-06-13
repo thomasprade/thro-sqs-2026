@@ -99,7 +99,7 @@ alt Weather API available
   BE --> FE : { data: { temperature, weatherCode } }
   FE --> User : shows icon + temperature in header
 else Weather API unavailable (circuit breaker open)
-  BE --> FE : null / fallback response
+  BE --> FE : HTTP 500 (Internal Server Error)
   FE --> User : shows error message; rest of app stays usable
 end
 @enduml
