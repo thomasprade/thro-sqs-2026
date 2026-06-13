@@ -2,8 +2,8 @@ import type { Ingredient, Recipe } from '@app/shared';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import RecipePage from '../RecipePage';
 import { AuthProvider } from '../../auth/AuthContext';
+import RecipePage from '../RecipePage';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router', async () => {
@@ -17,6 +17,7 @@ vi.mock('../../api', () => ({
   addIngredients: vi.fn(),
   updateIngredient: vi.fn(),
   deleteIngredient: vi.fn(),
+  getWeather: vi.fn().mockResolvedValue({ temperature: 20, weatherCode: 0 }),
 }));
 
 import {
