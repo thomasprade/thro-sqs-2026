@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import nock from 'nock';
 import request from 'supertest';
 import { WeatherModule } from '../src/weather/weather.module';
-import { describe, afterEach, it } from 'node:test';
 
 const METEO_API_HOST = 'https://api.open-meteo.com';
 const METEO_API_PATH = '/v1/forecast';
