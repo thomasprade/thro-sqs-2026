@@ -6,6 +6,7 @@ import { IngredientEntity } from './ingredients/ingredient.entity';
 import { IngredientsModule } from './ingredients/ingredients.module';
 import { RecipeEntity } from './recipes/recipe.entity';
 import { RecipeModule } from './recipes/recipe.module';
+import { WeatherModule } from './weather/weather.module';
 
 const databasePath = process.env.DATABASE_PATH || './data/database.sqlite';
 
@@ -20,6 +21,7 @@ const databasePath = process.env.DATABASE_PATH || './data/database.sqlite';
     AuthModule,
     RecipeModule,
     IngredientsModule,
+    WeatherModule,
   ],
 })
 export class AppModule {}

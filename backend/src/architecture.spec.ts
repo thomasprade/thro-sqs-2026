@@ -162,7 +162,7 @@ describe('Architecture', () => {
         .inFolder('src/**')
         .shouldNot()
         .haveName(
-          /^(?!.*\.(controller|service|entity|module|mapper|dto|decorator|constants|guard|spec)\.ts$)(?!main\.ts$).*\.ts$/,
+          /^(?!.*\.(controller|service|repository|entity|module|mapper|dto|decorator|constants|guard|spec)\.ts$)(?!main\.ts$).*\.ts$/,
         );
 
       await expect(rule).toPassAsync();
