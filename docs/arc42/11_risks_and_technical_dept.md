@@ -6,7 +6,6 @@ Identified risks and technical debt, ordered by priority, with suggested measure
 
 | Risk                                   | Description                                                                                | Mitigation                                                                    |
 | -------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------- |
-| Weak JWT secret in production          | The secret falls back to a hardcoded dev value if `JWT_SECRET` is unset.                   | `JWT_SECRET` is required in production; keep it out of version control.       |
 | Schema auto-sync (`synchronize: true`) | TypeORM derives the schema from entities and will silently drop columns on entity changes. | Acceptable for this prototype; introduce migrations if the project continues. |
 | Heavy usage of open-source components  | npm packages are prone to supply-chain attacks.                                            | Lockfile-pinned installs; static analysis and dependency review in CI.        |
 | Single SQLite file / single node       | No replication or automated backups; the file is a single point of failure.                | Sufficient for the project scope; back up the `./data` volume if needed.      |
