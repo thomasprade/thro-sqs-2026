@@ -21,6 +21,8 @@ async function apiFetch(url: string, options: RequestInit = {}): Promise<Respons
   const res = await fetch(url, { ...options, headers });
   if (res.status === 401) {
     globalThis.dispatchEvent(new Event('auth:unauthorized'));
+  } else if (!res.ok) {
+    globalThis.dispatchEvent(new CustomEvent('api:error', { detail: { status: res.status } }));
   }
   return res;
 }
