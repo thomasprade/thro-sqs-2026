@@ -1,6 +1,5 @@
 ---
 status: Accepted
-date: 2026-05-21
 deciders: Thomas, ypw
 ---
 
@@ -31,13 +30,15 @@ Therefore the overhead of using hexagonal architecture is not justified.
 
 Positive:
 
-- simple and working architecture
-- easy to develop
-- easy to understand in small projects
+- Simple and working architecture
+- Easy to develop
+- Easy to understand in small projects
 
 Negative:
 
-- hard to exchange components
-- hard to maintain should the project continue to grow
+- Harder to exchange components
+- Harder to maintain should the project continue to grow
 
 ## More Information
+
+- Since the chosen database library (TypeORM) already provides a repository pattern, with excellent abstraction over the actual database implementation, we can easily exchange the database layer without affecting the rest of the system (See [ADR 004](adr004_orm.md)).
