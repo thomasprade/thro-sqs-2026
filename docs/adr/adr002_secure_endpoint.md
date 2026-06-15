@@ -1,6 +1,5 @@
 ---
 status: Accepted
-date: 2026-05-05
 deciders: Thomas, dtke, ypw, F. Rampf
 ---
 

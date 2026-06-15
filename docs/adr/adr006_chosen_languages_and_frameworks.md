@@ -1,6 +1,5 @@
 ---
 status: Accepted
-date: 2026-04-04
 deciders: Thomas, ypw
 ---
 
