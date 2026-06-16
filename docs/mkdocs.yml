@@ -80,3 +80,9 @@ nav:
           - adr/adr001_core_architecture.md
           - adr/adr002_secure_endpoint.md
           - adr/adr003_node_version.md
+          - adr/adr004_orm.md
+          - adr/adr005_docker_setup.md
+          - adr/adr006_chosen_languages_and_frameworks.md
+          - adr/adr007_testing_strategy.md
+          - adr/adr008_database.md
+          
