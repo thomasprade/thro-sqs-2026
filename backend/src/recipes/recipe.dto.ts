@@ -2,7 +2,7 @@ import {
   CreateRecipeDto as sharedCreateRecipeDto,
   UpdateRecipeDto as sharedUpdateRecipeDto,
 } from '@app/shared';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 //
 export class CreateRecipeDto implements sharedCreateRecipeDto {
   @IsString()
@@ -10,7 +10,6 @@ export class CreateRecipeDto implements sharedCreateRecipeDto {
   title!: string;
 
   @IsString()
-  @IsNotEmpty()
   description!: string;
 
   @IsString()
@@ -19,12 +18,15 @@ export class CreateRecipeDto implements sharedCreateRecipeDto {
 }
 
 export class UpdateRecipeDto implements sharedUpdateRecipeDto {
+  @IsOptional()
   @IsString()
   title?: string;
 
+  @IsOptional()
   @IsString()
   description?: string;
 
+  @IsOptional()
   @IsString()
-  author!: string;
+  author?: string;
 }

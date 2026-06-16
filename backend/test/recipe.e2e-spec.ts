@@ -102,17 +102,6 @@ describe('Recipe (e2e)', () => {
       })
       .expect(400);
   });
-
-  it('POST /api/recipes — should reject empty description', async () => {
-    await request(app.getHttpServer())
-      .post('/api/recipes')
-      .send({
-        title: 'E2E Test Title',
-        description: '',
-        author: 'E2E Test Author',
-      })
-      .expect(400);
-  });
   it('POST /api/recipes — should reject empty author', async () => {
     await request(app.getHttpServer())
       .post('/api/recipes')
