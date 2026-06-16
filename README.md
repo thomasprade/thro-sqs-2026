@@ -46,6 +46,9 @@ docker compose up --build
 SQLite data is persisted to the host `./data/` directory via a Docker volume.
 It is seeded with a demo user `testuser` and password `testpass` as well as some recipes.
 
+> **Warning**
+> The seeded database in `./data/` is just an example! Never use this setup in production and never include your database in a public repository!
+
 To seed a user into the Docker-shared database:
 
 ```bash

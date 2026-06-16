@@ -47,7 +47,7 @@ Setup is done in the root directory.
 See [Toplevel README.md](../README.md) for details.
 
 The SQLite file is created on first boot at `DATABASE_PATH` (default `./data/database.sqlite`, relative to the backend root).
-Deleting the sqlite file is the reset button.
+Deleting the sqlite file is the reset button, it is seeded with demo values.
 
 ### Seeding users
 
