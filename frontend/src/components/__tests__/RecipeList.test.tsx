@@ -48,13 +48,13 @@ describe('RecipeList', () => {
     renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByText('Pasta')).toBeInTheDocument();
     expect(screen.getByText('Salad')).toBeInTheDocument();
-    expect(screen.getByText('Simple pasta dish')).toBeInTheDocument();
+    expect(screen.queryByText('Simple pasta dish')).not.toBeInTheDocument();
   });
 
   it('renders table headers', () => {
     renderWithRouter(<RecipeList recipes={mockRecipes} onEdit={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByText('Recipe Name')).toBeInTheDocument();
-    expect(screen.getByText('Recipe Description')).toBeInTheDocument();
+    expect(screen.queryByText('Recipe Description')).not.toBeInTheDocument();
     expect(screen.getByText('Actions')).toBeInTheDocument();
   });
 
