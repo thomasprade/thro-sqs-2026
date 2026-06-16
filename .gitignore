@@ -1,12 +1,11 @@
 node_modules/
 dist/
-*.sqlite
+backend/data/*.sqlite
 .env
 coverage/
 coverage-e2e/
 .nyc_output/
 *.tsbuildinfo
-data/
 playwright-report/
 test-results/
 .vite/
