@@ -7,8 +7,8 @@ build:
     python: '3.13'
 
 mkdocs:
-  configuration: docs/mkdocs.yml
+  configuration: docs/readTheDocs/mkdocs.yml
 
 python:
   install:
-    - requirements: docs/requirements.txt
+    - requirements: docs/readTheDocs/requirements.txt

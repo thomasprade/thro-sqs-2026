@@ -5,7 +5,7 @@ The target user is the home cook in search for a minimalistic and clean way to o
 
 ## Requirements Overview
 
-A short description of the core functional requirements for our system. For a detailed list see our [requirements document](../requirements.md).
+A short description of the core functional requirements for our system.
 
 | UseCaseID | Short Description                                                              |
 | --------- | ------------------------------------------------------------------------------ |
@@ -50,7 +50,7 @@ Our top three quality goals (categories based on ISO 25010):
 
 ## Stakeholders
 
-| Role              | Contact Channels     | Expectations                                                                                          |
-| ----------------- | -------------------- | ----------------------------------------------------------------------------------------------------- |
-| Dev Team          | Lecture, Dev channel | Guided introduction to professional software quality assurance                                        |
-| Course Instructor | Lecture, Mail        | Adherence of project to course requirements listed in the [requirements document](../requirements.md) |
+| Role              | Contact Channels     | Expectations                                                                  |
+| ----------------- | -------------------- | ----------------------------------------------------------------------------- |
+| Dev Team          | Lecture, Dev channel | Guided introduction to professional software quality assurance                |
+| Course Instructor | Lecture, Mail        | Adherence of project to course requirements listed in the course requirements |
