@@ -30,7 +30,8 @@ export class RecipeService {
 
   async update(id: number, dto: UpdateRecipeDto): Promise<RecipeEntity> {
     const recipe = await this.findOne(id);
-    Object.assign(recipe, dto);
+    const patch = Object.fromEntries(Object.entries(dto).filter(([, v]) => v !== undefined));
+    Object.assign(recipe, patch);
     return this.recipeRepo.save(recipe);
   }
 

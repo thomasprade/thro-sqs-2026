@@ -126,7 +126,7 @@ describe('IngredientFormDialog', () => {
           onClose={vi.fn()}
         />,
       );
-      expect(screen.getByRole('heading', { name: 'Edit Ingredient' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Edit Recipe' })).toBeInTheDocument();
       expect(screen.getByTestId('ingredient-name-0').querySelector('input')).toHaveValue('Flour');
       expect(screen.getByTestId('ingredient-amount-0').querySelector('input')).toHaveValue(200);
       expect(screen.getByTestId('ingredient-unit-0').querySelector('input')).toHaveValue('g');

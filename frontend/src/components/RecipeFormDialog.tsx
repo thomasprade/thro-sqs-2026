@@ -26,11 +26,9 @@ export default function RecipeFormDialog({
 }: Readonly<RecipeFormDialogProps>) {
   const isEdit = !!recipe;
   const initialTitle = recipe?.title ?? '';
-  const initialDescription = recipe?.description ?? '';
   const initialAuthor = recipe?.author ?? '';
 
   const [title, setTitle] = useState(initialTitle);
-  const [description, setDescription] = useState(initialDescription);
   const [author, setAuthor] = useState(initialAuthor);
   const [submitting, setSubmitting] = useState(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
@@ -38,15 +36,13 @@ export default function RecipeFormDialog({
   useEffect(() => {
     if (open) {
       setTitle(recipe?.title ?? '');
-      setDescription(recipe?.description ?? '');
       setAuthor(recipe?.author ?? '');
     }
     setSubmitting(false);
     setShowUnsavedWarning(false);
   }, [open, recipe?.id]);
 
-  const isDirty =
-    title !== initialTitle || description !== initialDescription || author !== initialAuthor;
+  const isDirty = title !== initialTitle || author !== initialAuthor;
 
   const handleClose = () => {
     if (isDirty) {
@@ -72,7 +68,7 @@ export default function RecipeFormDialog({
     try {
       await onSave({
         title: trimmedTitle,
-        description: description.trim(),
+        description: '',
         author: author.trim(),
       });
     } finally {
@@ -103,14 +99,6 @@ export default function RecipeFormDialog({
             required
             fullWidth
             autoFocus
-          />
-          <TextField
-            label="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            disabled={submitting}
-            required
-            fullWidth
           />
           <TextField
             label="Author"

@@ -17,6 +17,7 @@ vi.mock('../../api', () => ({
   addIngredients: vi.fn(),
   updateIngredient: vi.fn(),
   deleteIngredient: vi.fn(),
+  updateRecipe: vi.fn(),
   getWeather: vi.fn().mockResolvedValue({ temperature: 20, weatherCode: 0 }),
 }));
 
@@ -26,6 +27,7 @@ import {
   fetchIngredients,
   fetchRecipe,
   updateIngredient,
+  updateRecipe,
 } from '../../api';
 import { AUTH_TOKEN_KEY, TEST_TOKEN } from '../../components/__tests__/test.helper';
 
@@ -105,11 +107,13 @@ describe('RecipePage', () => {
     vi.mocked(fetchIngredients).mockClear();
 
     render(
-      <MemoryRouter initialEntries={['/recipe/abc']}>
-        <Routes>
-          <Route path="/recipe/:id" element={<RecipePage />} />
-        </Routes>
-      </MemoryRouter>,
+      <AuthProvider>
+        <MemoryRouter initialEntries={['/recipe/abc']}>
+          <Routes>
+            <Route path="/recipe/:id" element={<RecipePage />} />
+          </Routes>
+        </MemoryRouter>
+      </AuthProvider>,
     );
 
     await waitFor(() => {
@@ -200,12 +204,12 @@ describe('RecipePage', () => {
   });
 
   describe('edit mode', () => {
-    it('shows "Edit Ingredients" button that toggles to "Done"', async () => {
+    it('shows "Edit Recipe" button that toggles to "Done"', async () => {
       renderRecipePage();
       await waitFor(() => {
         expect(screen.getByTestId('edit-ingredients-toggle')).toBeInTheDocument();
       });
-      expect(screen.getByTestId('edit-ingredients-toggle')).toHaveTextContent('Edit Ingredients');
+      expect(screen.getByTestId('edit-ingredients-toggle')).toHaveTextContent('Edit Recipe');
 
       fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
       expect(screen.getByTestId('edit-ingredients-toggle')).toHaveTextContent('Done');
@@ -275,7 +279,7 @@ describe('RecipePage', () => {
       fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
       fireEvent.click(screen.getByLabelText('Edit Spaghetti'));
 
-      expect(screen.getByRole('heading', { name: 'Edit Ingredient' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Edit Recipe' })).toBeInTheDocument();
       expect(screen.getByTestId('ingredient-name-0').querySelector('input')).toHaveValue(
         'Spaghetti',
       );
@@ -379,6 +383,161 @@ describe('RecipePage', () => {
 
       fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
       expect(screen.getByTestId('portions-input')).toBeInTheDocument();
+    });
+  });
+
+  describe('description', () => {
+    it('renders description as plain text below ingredients when not editing', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      expect(screen.getByTestId('description-text')).toHaveTextContent(
+        'A classic Italian pasta dish',
+      );
+      expect(screen.queryByTestId('description-field')).not.toBeInTheDocument();
+    });
+
+    it('description text is rendered after the ingredient list', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      const ingredientTable = screen.getByRole('table');
+      const descriptionText = screen.getByTestId('description-text');
+      expect(
+        ingredientTable.compareDocumentPosition(descriptionText) & Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy();
+    });
+
+    it('renders description as TextField when in edit mode', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByTestId('description-field')).toBeInTheDocument();
+      expect(screen.queryByTestId('description-text')).not.toBeInTheDocument();
+    });
+
+    it('Save Description button is disabled when description is unchanged', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      expect(screen.getByTestId('save-description-button')).toBeDisabled();
+    });
+
+    it('Save Description button becomes enabled after changing the description', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      const textarea = screen.getByTestId('description-field').querySelector('textarea')!;
+      fireEvent.change(textarea, { target: { value: 'New description' } });
+      expect(screen.getByTestId('save-description-button')).toBeEnabled();
+    });
+
+    it('clicking Save Description calls updateRecipe with the new description', async () => {
+      vi.mocked(updateRecipe).mockResolvedValue({
+        ...mockRecipe,
+        description: 'New description',
+      });
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      const textarea = screen.getByTestId('description-field').querySelector('textarea')!;
+      fireEvent.change(textarea, { target: { value: 'New description' } });
+      fireEvent.click(screen.getByTestId('save-description-button'));
+
+      await waitFor(() =>
+        expect(updateRecipe).toHaveBeenCalledWith(1, { description: 'New description' }),
+      );
+    });
+
+    it('Save Description button is disabled again after saving', async () => {
+      vi.mocked(updateRecipe).mockResolvedValue({
+        ...mockRecipe,
+        description: 'New description',
+      });
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      const textarea = screen.getByTestId('description-field').querySelector('textarea')!;
+      fireEvent.change(textarea, { target: { value: 'New description' } });
+      fireEvent.click(screen.getByTestId('save-description-button'));
+
+      await waitFor(() => expect(screen.getByTestId('save-description-button')).toBeDisabled());
+    });
+
+    it('shows UnsavedChangesDialog when clicking Done with unsaved description', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      const textarea = screen.getByTestId('description-field').querySelector('textarea')!;
+      fireEvent.change(textarea, { target: { value: 'Unsaved text' } });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+
+      expect(screen.getByText('Unsaved Changes')).toBeInTheDocument();
+    });
+
+    it('clicking Discard resets description draft and exits edit mode', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      const textarea = screen.getByTestId('description-field').querySelector('textarea')!;
+      fireEvent.change(textarea, { target: { value: 'Discardable text' } });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      fireEvent.click(screen.getByRole('button', { name: 'Discard' }));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('description-field')).not.toBeInTheDocument();
+        expect(screen.getByTestId('description-text')).toHaveTextContent(
+          'A classic Italian pasta dish',
+        );
+      });
+    });
+
+    it('clicking Keep Editing closes dialog and stays in edit mode with draft intact', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      const textarea = screen.getByTestId('description-field').querySelector('textarea')!;
+      fireEvent.change(textarea, { target: { value: 'Draft text' } });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      fireEvent.click(screen.getByRole('button', { name: 'Keep Editing' }));
+
+      await waitFor(() => {
+        expect(screen.queryByText('Unsaved Changes')).not.toBeInTheDocument();
+      });
+      expect(screen.getByTestId('description-field')).toBeInTheDocument();
+      expect(screen.getByTestId('description-field').querySelector('textarea')).toHaveValue(
+        'Draft text',
+      );
+    });
+
+    it('does not show UnsavedChangesDialog when clicking Done without changes', async () => {
+      renderRecipePage();
+      await waitFor(() => {
+        expect(screen.getByText('Pasta Carbonara')).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+      fireEvent.click(screen.getByTestId('edit-ingredients-toggle'));
+
+      expect(screen.queryByText('Unsaved Changes')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('description-field')).not.toBeInTheDocument();
     });
   });
 });

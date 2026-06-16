@@ -23,12 +23,10 @@ test.describe('Recipe App', () => {
     await page.getByRole('textbox', { name: 'Title' }).click();
     await page.getByRole('textbox', { name: 'Title' }).fill('Testrezept');
     await page.getByRole('textbox', { name: 'Title' }).press('Tab');
-    await page.getByRole('textbox', { name: 'Description' }).fill('Testrezept');
-    await page.getByRole('textbox', { name: 'Description' }).press('Tab');
     await page.getByRole('textbox', { name: 'Author' }).fill('testuser');
     await page.getByRole('button', { name: 'Save' }).click();
 
-    // Verify the new recipe appears in the list with correct title and description
+    // Verify the new recipe appears in the list with correct title (no description column)
     await expect(page.getByRole('cell', { name: 'Testrezept' }).first()).toContainText(
       'Testrezept',
     );
@@ -81,5 +79,39 @@ test.describe('Recipe App', () => {
     // Verify that portions correctly multiply ingredient amounts
     await page.getByRole('spinbutton', { name: 'Portions' }).fill('10');
     await expect(page.getByRole('cell', { name: '20' })).toBeVisible();
+
+    // Edit the description as a cooking manual
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await expect(page.getByTestId('description-field')).toBeVisible();
+    await expect(page.getByTestId('save-description-button')).toBeDisabled();
+
+    await page
+      .getByTestId('description-field')
+      .locator('textarea')
+      .first()
+      .fill('Schritt 1: Zutaten vorbereiten');
+    await expect(page.getByTestId('save-description-button')).toBeEnabled();
+    await page.getByTestId('save-description-button').click();
+    await expect(page.getByTestId('save-description-button')).toBeDisabled();
+
+    // Exit edit mode and verify description is shown as plain text
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await expect(page.getByTestId('description-text')).toContainText(
+      'Schritt 1: Zutaten vorbereiten',
+    );
+
+    // Verify UnsavedChangesDialog appears when exiting edit mode with unsaved description changes
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await page
+      .getByTestId('description-field')
+      .locator('textarea')
+      .first()
+      .fill('Nicht gespeichert');
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await expect(page.getByRole('heading', { name: 'Unsaved Changes' })).toBeVisible();
+    await page.getByRole('button', { name: 'Discard' }).click();
+    await expect(page.getByTestId('description-text')).toContainText(
+      'Schritt 1: Zutaten vorbereiten',
+    );
   });
 });

@@ -102,7 +102,7 @@ export default function IngredientFormDialog({
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
-      <DialogTitle>{isEdit ? 'Edit Ingredient' : 'Add Ingredients'}</DialogTitle>
+      <DialogTitle>{isEdit ? 'Edit Recipe' : 'Add Ingredients'}</DialogTitle>
       <DialogContent
         sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}
       >
