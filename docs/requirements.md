@@ -3,7 +3,7 @@
 ## Must Haves: Course Requirements
 
 - [x] public repo
-- [ ] 15 min Presentation -> issue #30
+- [ ] 30 min Presentation -> issue #30
   - [ ] live demo
   - [ ] presentation of static code analysis tools
   - [ ] presentation of static code analysis based on latest project state
@@ -11,50 +11,51 @@
   - [ ] test concept and used tools
   - [ ] prepare for questions
 - [x] written in Typescript
-- [ ] Implementation
-  - [ ] public endpoint/frontend
-  - [ ] secure endpoint -> issue #31
-  - [ ] backend
-    - [ ] API
-      - [ ] fail-safe architecture pattern ("Ausfallsichere Architekturpatterns zum Anbinden externe[r] Services") -> Issue 32
+- [x] Implementation
+  - [x] public endpoint/frontend
+  - [x] secure endpoint -> issue #31
+  - [x] backend
+    - [x] API
+      - [x] fail-safe architecture pattern ("Ausfallsichere Architekturpatterns zum Anbinden externe[r] Services") -> Issue 32
   - [x] persistence
-  - [ ] tests
-    - [ ] unit tests -> Issue #33
-    - [ ] integration tests -> Issue #34
-    - [ ] e2e tests -> Issue #35
-    - [ ] penetration tests (could be integration test with test of security logic) -> Issue #36
-    - [ ] arch tests -> Issue #25
-    - [ ] github pipeline -> Issue #38
-      - [ ] steps: first build, then use build artifacts for tests
-    - [ ] static code analysis -> Issue #37
-      - [ ] min 80% test coverage
-      - [ ] no open issues
-  - [ ] documentation
-    - [ ] arc42 documentation for project -> Issue #39
-    - [ ] C4 Model (for presentation) -> Issue #30 (could be made into sub-issue)
+  - [x] tests
+    - [x] unit tests -> Issue #33
+    - [x] integration tests -> Issue #34
+    - [x] e2e tests -> Issue #35
+    - [x] penetration tests (could be integration test with test of security logic) -> Issue #36
+    - [x] arch tests -> Issue #25
+    - [x] github pipeline -> Issue #38
+      - [x] steps: first build, then use build artifacts for tests
+    - [x] static code analysis -> Issue #37
+      - [x] min 80% test coverage
+      - [x] no open issues
+  - [x] documentation
+    - [x] arc42 documentation for project -> Issue #39
+    - [x] C4 Model (for presentation) -> Issue #30 (could be made into sub-issue)
     - [ ] project decisions in ADR -> Issue #40
-    - [ ] clean structured documentation
-    - [ ] documentation hosted on readthedocs -> Issue #41
-  - [ ] setup with max 2 commands -> Issue #42
+    - [x] clean structured documentation
+    - [x] documentation hosted on readthedocs -> Issue #41
+  - [x] setup with max 2 commands -> Issue #42
 
 ## MVP
 
-- [ ] backend
+- [x] backend
   - [x] recipes
     - [x] crud
-  - [ ] ingredients
+  - [x] ingredients
     - [x] cr
-    - [ ] ud -> #16
-  - [ ] recipe steps -> #24
+    - [x] ud -> #16
+  - [ ] recipe steps -> #24, #68
     - [ ] crud
-  - [ ] API
-    - [ ] exist -> #3
-    - [ ] protect endpoint -> #31
-- [ ] frontend
+  - [x] API
+    - [x] exist -> #3
+  - [x] protect endpoint -> #31
+- [x] frontend
   - [ ] print to pdf -> #4
-  - [ ] pages -> #12
-  - [ ] page for recipes -> #43
-  - [ ] recipe manipulation -> #12
-  - [ ] better ts layout (material ui) -> #23
+  - [x] weather api -> #53
+  - [x] pages -> #12
+  - [x] page for recipes -> #43
+  - [x] recipe manipulation -> #12
+  - [x] better ts layout (material ui) -> #23
 
 ## Nice to have
