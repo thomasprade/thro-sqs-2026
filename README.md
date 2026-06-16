@@ -37,19 +37,29 @@ This project can be run in two modes: Docker mode for local hosting with easy se
 docker compose up --build
 ```
 
+> [!Note]
+> The docker setup comes with demo recipes and a test user.
+> Login as the demo user with: `testuser` and password `testpass`.
+
 | Service    | URL                                            |
 | ---------- | ---------------------------------------------- |
 | Frontend   | [http://localhost:8080](http://localhost:8080) |
 | Backend    | [http://localhost:3000](http://localhost:3000) |
 | sqlite-web | [http://localhost:8081](http://localhost:8081) |
 
-SQLite data is persisted to the host `./data/` directory via a Docker volume. To seed a user into the Docker-shared database:
+SQLite data is persisted to the host `./data/` directory via a Docker volume.
+
+> [!Warning]
+> The seeded database in `./data/` is just an example! Never use this setup in production and never include your database in a public repository!
+
+To seed a user into the Docker-shared database:
 
 ```bash
 npm run create-user:docker -- testuser testpass
 ```
 
-> **Note:** the `docker-compose.yml` ships with a placeholder `JWT_SECRET=your-secure-jwt-secret`. Override it before any real deployment (see [Environment Variables](#environment-variables)).
+> [!Note]
+> The `docker-compose.yml` ships with a placeholder `JWT_SECRET=your-secure-jwt-secret`. Override it before any real deployment (see [Environment Variables](#environment-variables)).
 
 ### Development Mode
 
