@@ -43,7 +43,10 @@ docker compose up --build
 | Backend    | [http://localhost:3000](http://localhost:3000) |
 | sqlite-web | [http://localhost:8081](http://localhost:8081) |
 
-SQLite data is persisted to the host `./data/` directory via a Docker volume. To seed a user into the Docker-shared database:
+SQLite data is persisted to the host `./data/` directory via a Docker volume.
+It is seeded with a demo user `testuser` and password `testpass` as well as some recipes.
+
+To seed a user into the Docker-shared database:
 
 ```bash
 npm run create-user:docker -- testuser testpass
