@@ -23,6 +23,7 @@ jobs:
 
   build-fe:
     name: Build Frontend
+    needs: [lint-and-format]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -36,6 +37,7 @@ jobs:
 
   build-be:
     name: Build Backend
+    needs: [lint-and-format]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
