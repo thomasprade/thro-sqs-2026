@@ -19,7 +19,6 @@ test.describe('Recipe App UI', () => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Title').fill('Playwright Pasta');
-    await dialog.getByLabel('Description').fill('A simple dish');
     await dialog.getByLabel('Author').fill('Doe');
     await dialog.getByRole('button', { name: 'Save' }).click();
 
@@ -30,7 +29,6 @@ test.describe('Recipe App UI', () => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Title').fill('Delete Me');
-    await dialog.getByLabel('Description').fill('Please');
     await dialog.getByLabel('Author').fill('I can not do this anymore');
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Delete Me')).toBeVisible();
@@ -43,7 +41,6 @@ test.describe('Recipe App UI', () => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     let dialog = page.getByRole('dialog');
     await dialog.getByLabel('Title').fill('Old Title');
-    await dialog.getByLabel('Description').fill('A simple dish');
     await dialog.getByLabel('Author').fill('Doe');
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Old Title')).toBeVisible();
@@ -61,7 +58,6 @@ test.describe('Recipe App UI', () => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Title').fill('Pasta');
-    await dialog.getByLabel('Description').fill('A simple dish');
     await dialog.getByLabel('Author').fill('Doe');
     await dialog.getByRole('button', { name: 'Save' }).click();
 
@@ -119,7 +115,6 @@ test.describe('Recipe Detail Page', () => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Title').fill('Test Recipe');
-    await dialog.getByLabel('Description').fill('A delicious test recipe');
     await dialog.getByLabel('Author').fill('Test Chef');
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Test Recipe', { exact: true })).toBeVisible();
@@ -128,7 +123,6 @@ test.describe('Recipe Detail Page', () => {
   test('should navigate to recipe detail page when clicking a recipe row', async ({ page }) => {
     await page.getByTestId('recipe-1').click();
     await expect(page.getByRole('heading', { name: 'Test Recipe' })).toBeVisible();
-    await expect(page.getByText('A delicious test recipe')).toBeVisible();
   });
 
   test('should display ingredients with amounts and units', async ({ page }) => {
@@ -176,7 +170,6 @@ test.describe('Ingredient Editing', () => {
     await page.getByRole('button', { name: 'New Recipe' }).click();
     const dialog = page.getByRole('dialog');
     await dialog.getByLabel('Title').fill('Edit Test Recipe');
-    await dialog.getByLabel('Description').fill('Testing ingredients');
     await dialog.getByLabel('Author').fill('Tester');
     await dialog.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByText('Edit Test Recipe', { exact: true })).toBeVisible();
@@ -187,7 +180,7 @@ test.describe('Ingredient Editing', () => {
   });
 
   test('should toggle edit mode showing action buttons', async ({ page }) => {
-    await expect(page.getByTestId('edit-ingredients-toggle')).toHaveText('Edit Ingredients');
+    await expect(page.getByTestId('edit-ingredients-toggle')).toHaveText('Edit Recipe');
     await expect(page.getByLabel('Edit Flour')).not.toBeVisible();
 
     await page.getByTestId('edit-ingredients-toggle').click();
@@ -210,7 +203,7 @@ test.describe('Ingredient Editing', () => {
     await page.getByLabel('Edit Flour').click();
 
     const dialog = page.getByRole('dialog');
-    await expect(dialog.getByRole('heading', { name: 'Edit Ingredient' })).toBeVisible();
+    await expect(dialog.getByRole('heading', { name: 'Edit Recipe' })).toBeVisible();
 
     await dialog.getByTestId('ingredient-name-0').locator('input').fill('All-Purpose Flour');
     await dialog.getByTestId('ingredient-amount-0').locator('input').fill('300');
@@ -235,5 +228,99 @@ test.describe('Ingredient Editing', () => {
     await dialog.getByRole('button', { name: 'Save' }).click();
 
     await expect(page.getByText('Butter')).toBeVisible();
+  });
+});
+
+test.describe('Recipe Description Editing', () => {
+  test.beforeEach(async ({ page }) => {
+    await installRecipeApiMock(page);
+    await page.goto('/');
+
+    await page.getByRole('button', { name: 'New Recipe' }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Title').fill('Cooking Manual Recipe');
+    await dialog.getByLabel('Author').fill('Chef');
+    await dialog.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByText('Cooking Manual Recipe', { exact: true })).toBeVisible();
+
+    await page.getByTestId('recipe-1').click();
+    await expect(page.getByRole('heading', { name: 'Cooking Manual Recipe' })).toBeVisible();
+  });
+
+  test('description is shown as plain text when not in edit mode', async ({ page }) => {
+    await expect(page.getByTestId('description-text')).toBeAttached();
+    await expect(page.getByTestId('description-field')).not.toBeAttached();
+  });
+
+  test('entering edit mode reveals description text field', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await expect(page.getByTestId('description-field')).toBeVisible();
+    await expect(page.getByTestId('description-text')).not.toBeVisible();
+  });
+
+  test('Save Description button is disabled when description is unchanged', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await expect(page.getByTestId('save-description-button')).toBeDisabled();
+  });
+
+  test('Save Description button becomes enabled after typing', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await page
+      .getByTestId('description-field')
+      .locator('textarea')
+      .first()
+      .fill('New cooking instructions');
+    await expect(page.getByTestId('save-description-button')).toBeEnabled();
+  });
+
+  test('saving description persists value and disables save button again', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await page
+      .getByTestId('description-field')
+      .locator('textarea')
+      .first()
+      .fill('Step 1: Preheat oven');
+    await page.getByTestId('save-description-button').click();
+    await expect(page.getByTestId('save-description-button')).toBeDisabled();
+
+    // Exit edit mode and verify the description is shown as plain text
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await expect(page.getByTestId('description-text')).toContainText('Step 1: Preheat oven');
+  });
+
+  test('clicking Done with unsaved description shows UnsavedChangesDialog', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await page.getByTestId('description-field').locator('textarea').first().fill('Unsaved text');
+    await page.getByTestId('edit-ingredients-toggle').click();
+
+    await expect(page.getByRole('heading', { name: 'Unsaved Changes' })).toBeVisible();
+  });
+
+  test('clicking Discard exits edit mode and resets description', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await page
+      .getByTestId('description-field')
+      .locator('textarea')
+      .first()
+      .fill('Discardable text');
+    await page.getByTestId('edit-ingredients-toggle').click();
+
+    await page.getByRole('button', { name: 'Discard' }).click();
+    await expect(page.getByRole('heading', { name: 'Unsaved Changes' })).not.toBeVisible();
+    await expect(page.getByTestId('description-text')).toBeAttached();
+    await expect(page.getByTestId('description-text')).not.toContainText('Discardable text');
+  });
+
+  test('clicking Keep Editing closes dialog and stays in edit mode', async ({ page }) => {
+    await page.getByTestId('edit-ingredients-toggle').click();
+    await page.getByTestId('description-field').locator('textarea').first().fill('Draft text');
+    await page.getByTestId('edit-ingredients-toggle').click();
+
+    await page.getByRole('button', { name: 'Keep Editing' }).click();
+    await expect(page.getByRole('heading', { name: 'Unsaved Changes' })).not.toBeVisible();
+    await expect(page.getByTestId('description-field')).toBeVisible();
+    await expect(page.getByTestId('description-field').locator('textarea').first()).toHaveValue(
+      'Draft text',
+    );
   });
 });
