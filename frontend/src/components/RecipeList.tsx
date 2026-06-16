@@ -60,9 +60,8 @@ export default function RecipeList({ recipes, onEdit, onDelete }: Readonly<Recip
         <Table stickyHeader sx={{ tableLayout: 'fixed' }}>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ width: '25%' }}>Recipe Name</TableCell>
-              <TableCell sx={{ width: '45%' }}>Recipe Description</TableCell>
-              <TableCell sx={{ width: '15%' }}>Author</TableCell>
+              <TableCell sx={{ width: '60%' }}>Recipe Name</TableCell>
+              <TableCell sx={{ width: '25%' }}>Author</TableCell>
               {isLoggedIn && (
                 <TableCell sx={{ width: '15%' }} align="right">
                   Actions
@@ -73,7 +72,7 @@ export default function RecipeList({ recipes, onEdit, onDelete }: Readonly<Recip
           <TableBody>
             {filteredRecipes.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={3} align="center">
                   No matching recipes
                 </TableCell>
               </TableRow>
@@ -87,7 +86,6 @@ export default function RecipeList({ recipes, onEdit, onDelete }: Readonly<Recip
                   sx={{ cursor: 'pointer' }}
                 >
                   <TableCell>{recipe.title}</TableCell>
-                  <TableCell>{recipe.description}</TableCell>
                   <TableCell>{recipe.author}</TableCell>
                   {isLoggedIn && (
                     <TableCell align="right">

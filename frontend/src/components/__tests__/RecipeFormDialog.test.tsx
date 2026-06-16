@@ -21,7 +21,7 @@ describe('RecipeFormDialog', () => {
       );
       expect(screen.getByText('Add Recipe')).toBeInTheDocument();
       expect(screen.getByLabelText(/title/i)).toHaveValue('');
-      expect(screen.getByLabelText(/description/i)).toHaveValue('');
+      expect(screen.queryByLabelText(/description/i)).not.toBeInTheDocument();
       expect(screen.getByLabelText(/author/i)).toHaveValue('');
     });
 
@@ -47,13 +47,12 @@ describe('RecipeFormDialog', () => {
       render(<RecipeFormDialog open={true} recipe={undefined} onSave={onSave} onClose={vi.fn()} />);
 
       await user.type(screen.getByLabelText(/title/i), 'Pasta');
-      await user.type(screen.getByLabelText(/description/i), 'A simple dish');
       await user.type(screen.getByLabelText(/author/i), 'Alice');
       await user.click(screen.getByRole('button', { name: /save/i }));
 
       expect(onSave).toHaveBeenCalledWith({
         title: 'Pasta',
-        description: 'A simple dish',
+        description: '',
         author: 'Alice',
       });
     });
@@ -122,7 +121,7 @@ describe('RecipeFormDialog', () => {
       );
       expect(screen.getByText('Edit Recipe')).toBeInTheDocument();
       expect(screen.getByLabelText(/title/i)).toHaveValue('Pasta');
-      expect(screen.getByLabelText(/description/i)).toHaveValue('Simple pasta dish');
+      expect(screen.queryByLabelText(/description/i)).not.toBeInTheDocument();
       expect(screen.getByLabelText(/author/i)).toHaveValue('Alice');
     });
 
@@ -140,7 +139,7 @@ describe('RecipeFormDialog', () => {
 
       expect(onSave).toHaveBeenCalledWith({
         title: 'New Pasta',
-        description: 'Simple pasta dish',
+        description: '',
         author: 'Alice',
       });
     });

@@ -54,7 +54,7 @@ export default function IngredientToolbar({
             onClick={onToggleEdit}
             data-testid="edit-ingredients-toggle"
           >
-            {editing ? 'Done' : 'Edit Ingredients'}
+            {editing ? 'Done' : 'Edit Recipe'}
           </Button>
           {editing && (
             <Button
