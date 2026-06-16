@@ -14,7 +14,7 @@ This keeps the frontend and backend in sync from a single source of truth.
 
 The backend protects every route by default with a global `AuthGuard`; routes opt out with the
 `@Public()` decorator (the recipe and ingredient reads, and `POST /api/auth/login`). Authentication
-uses stateless **JWT bearer tokens** (HS256, 24 h); the secret comes from `JWT_SECRET` and is
+uses stateless JWT bearer tokens (HS256, 24 h); the secret comes from `JWT_SECRET` and is
 required in production. Passwords are bcrypt-hashed. On the frontend, `AuthContext` stores the token
 in `localStorage` and the `api.ts` client sends it as `Authorization: Bearer` on writes. See
 [ADR-002](../adr/adr002_secure_endpoint.md).

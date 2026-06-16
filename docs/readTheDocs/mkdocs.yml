@@ -15,6 +15,7 @@ theme:
     - navigation.top
     - navigation.sections
     - navigation.footer
+    - navigation.indexes
     - search.highlight
     - search.suggest
     - content.code.copy
@@ -60,9 +61,7 @@ markdown_extensions:
 # Page tree
 nav:
   - Home:
-      - index.md
-      - c4:
-          - c4/c4.md
+      - Home: index.md
       - arc42:
           - arc42/01_introduction_and_goals.md
           - arc42/02_architecture_constraints.md
@@ -85,4 +84,3 @@ nav:
           - adr/adr006_chosen_languages_and_frameworks.md
           - adr/adr007_testing_strategy.md
           - adr/adr008_database.md
-          
